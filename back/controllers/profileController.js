@@ -192,6 +192,7 @@ module.exports = {
       if (!profile) {
         return res.status(404).send("User not found");
       }
+
       profile.name = newName;
       await profile.save();
 
