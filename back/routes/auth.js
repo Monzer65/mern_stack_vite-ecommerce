@@ -6,6 +6,7 @@ const User = require("../models/User");
 const authController = require("../controllers/authController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const validationMiddleware = require("../middlewares/validationMiddleware");
+const limiter = require("../config/rateLimitConfig");
 const cron = require("node-cron");
 
 cron.schedule("*/30 * * * *", async () => {
@@ -51,13 +52,9 @@ router.post(
   authController.registerUser
 );
 
-router.post(
-  "/resend",
-  validationMiddleware.validateResendCode,
-  authController.resendCode
-);
-
 router.post("/verify", authController.verifyUser);
+
+router.post("/resend", limiter, authController.resendCode);
 
 router.post(
   "/login",

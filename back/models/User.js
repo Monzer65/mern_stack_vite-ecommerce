@@ -12,39 +12,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    sparse: true,
-    validate: {
-      validator: async function (value) {
-        // Skip validation if value is empty or null
-        if (!value) return true;
-        // Check if email is valid
-        const isValid = isValidEmail(value);
-        // Return true if both conditions are met, false otherwise
-        return isValid;
-      },
-      message: (props) =>
-        `${props.value} is not a valid email or email is already provided`,
-    },
-  },
-  phone: {
-    type: String,
-    sparse: true,
-    validate: {
-      validator: async function (value) {
-        // Skip validation if value is empty or null
-        if (!value) return true;
-        // Check if phone is valid
-        const isValid = isValidPhoneNumber(value);
-        // Return true if both conditions are met, false otherwise
-        return isValid;
-      },
-      message: (props) =>
-        `${props.value} is not a valid phone or phone is already provided`,
-    },
-  },
-
+  email: { type: String, unique: true, sparse: true },
+  phone: { type: String, unique: true, sparse: true },
   newEmail: {
     type: String,
     unique: true,

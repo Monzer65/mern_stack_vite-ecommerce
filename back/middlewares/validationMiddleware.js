@@ -7,6 +7,10 @@ const {
   isValidPhoneNumber,
 } = require("../utiles/phoneEmailValidator");
 
+const isValidContact = (value) => {
+  return isValidEmail(value) || isValidPhoneNumber(value);
+};
+
 function formatPhoneNumber(phone) {
   // Normalize the phone number to remove any non-digit characters
   const normalizedPhone = phone.replace(/\D/g, "");
@@ -24,137 +28,49 @@ module.exports = {
       .trim()
       .isLength({ max: 50 })
       .notEmpty()
-      .withMessage({ msg: "Name is required", path: "name" }), // Add path property
+      .withMessage("Name is required")
+      .escape(),
     body("contact")
       .trim()
-      .isLength({ max: 50 })
-      .custom(async (value, { req }) => {
-        if (!value) {
-          throw {
-            msg: "Email or Phone is required",
-            path: "contact",
-          };
-        }
+      .notEmpty()
+      .withMessage("Contact is required")
+      .bail()
+      .custom(isValidContact)
+      .withMessage("Invalid email address or phone number")
+      .escape(),
 
-        const isEmail = isValidEmail(value);
-        const isPhone = isValidPhoneNumber(value);
-        const existingUser = await User.findOne({
-          $or: [
-            { email: value },
-            { phone: isPhone ? formatPhoneNumber(value) : "" },
-          ],
-        });
-
-        if (existingUser && existingUser.isVerified) {
-          throw {
-            msg: "User is already verified",
-            path: "contact",
-          };
-        }
-
-        if (!isEmail && !isPhone) {
-          throw {
-            msg: "Please provide a valid email or phone",
-            path: "contact",
-          };
-        }
-
-        if (
-          existingUser &&
-          !existingUser.isVerified &&
-          existingUser.verificationCodeExpiration > Date.now()
-        ) {
-          throw {
-            msg: "Verification is in progress",
-            path: "contact",
-          };
-        }
-        return true;
-      }),
     body("password")
       .trim()
-      .isLength({ max: 50 })
       .notEmpty()
-      .isLength({ min: 6 })
-      .withMessage({ msg: "Password is required", path: "password" }), // Add path property
+      .withMessage("Password is required")
+      .bail()
+      .isLength({ min: 6, max: 50 })
+      .withMessage("Password must be at least 6 characters long")
+      .escape(),
+
     body("repeatPassword")
       .trim()
       .isLength({ max: 50 })
       .custom((value, { req }) => value === req.body.password)
-      .withMessage({
-        msg: "Passwords do not match",
-        path: "repeatPassword",
-      }), // Add path property
-  ],
-
-  validateResendCode: [
-    body("email")
-      .trim()
-      .isLength({ max: 50 })
-      .if(body("phone").isEmpty())
-      .isEmail()
-      .withMessage("Invalid email format")
-      .custom(async (value) => {
-        const existingUser = await User.findOne({ email: value });
-        if (existingUser && existingUser.isVerified) {
-          throw new Error("email is already verified");
-        }
-        return true;
-      })
-      .normalizeEmail(),
-    body("phone")
-      .trim()
-      .isLength({ max: 20 })
-      .if(body("email").isEmpty())
-      .isMobilePhone()
-      .withMessage("Invalid phone number")
-      .custom(async (value) => {
-        const existingUser = await User.findOne({ phone: value });
-        if (existingUser && existingUser.isVerified) {
-          throw new Error("Phone number is already verified");
-        }
-        return true;
-      })
-      .normalizeEmail(),
-    (req, res, next) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map((error) => error.msg);
-        return res.status(400).json({ errors: errorMessages });
-      }
-      next();
-    },
+      .withMessage("Passwords do not match")
+      .escape(),
   ],
 
   validateLogin: [
     body("contact")
       .trim()
-      .isLength({ max: 50 })
       .notEmpty()
-      .custom((value) => {
-        // Normalize and format the contact value (email or phone)
-        const formattedContact = isValidPhoneNumber(value)
-          ? formatPhoneNumber(value)
-          : isValidEmail(value)
-          ? value
-          : null;
-
-        if (!formattedContact) {
-          throw new Error("Invalid email or phone number format");
-        }
-
-        return true;
-      })
-      .withMessage("Email or phone number is required"),
-    body("password").trim().notEmpty().withMessage("Password is required"),
-    (req, res, next) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map((error) => error.msg);
-        return res.status(400).json({ errors: errorMessages });
-      }
-      next();
-    },
+      .withMessage("Contact is required")
+      .bail()
+      .custom(isValidContact)
+      .withMessage("Invalid email address or phone number")
+      .escape(),
+    body("password")
+      .trim()
+      .notEmpty()
+      .withMessage("Password is required")
+      .bail()
+      .escape(),
   ],
 
   validateUpdateName: [

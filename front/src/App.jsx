@@ -8,7 +8,11 @@ import PropTypes from "prop-types";
 import Home from "./components/Home";
 import Cart from "./components/Cart";
 import RegisterForm from "./components/Register";
+import Verification from "./components/Verification";
 import Login from "./components/Login";
+import Logout from "./components/Logout";
+import Profile from "./components/Profile";
+
 import SampleRoute from "./components/SampleRoute";
 import NotFound from "./components/NotFound";
 
@@ -27,8 +31,14 @@ function App() {
           element={<SearchResult results={results} error={error} />}
         />
         <Route path="/register" element={<RegisterForm />} />
+        <Route path="/verify" element={<Verification />} />
+
         <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
+
         <Route path="/cart" element={<Cart />} />
+        <Route path="/profile" element={<Profile />} />
+
         <Route path="/sample" element={<SampleRoute />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -146,7 +146,7 @@ module.exports = {
 
       const profile = await User.findById(userId);
       if (!profile) {
-        return res.status(404).send("User not found");
+        return res.status(404).json({ error: "User not found" });
       }
 
       let selectedFields = {};
@@ -173,7 +173,7 @@ module.exports = {
       res.json(responseObject);
     } catch (err) {
       console.error("Error during profile retrieval:", err);
-      res.status(500).send("Server error");
+      res.status(500).json({ error: "Server error" });
     }
   },
 

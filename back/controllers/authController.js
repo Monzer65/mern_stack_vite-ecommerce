@@ -128,38 +128,53 @@ function formatPhoneNumber(phone) {
 module.exports = {
   async registerUser(req, res) {
     try {
-      const { name, contact, password, repeatPassword } = req.body;
+      const { name, contact, password } = req.body;
+
       const isEmail = isValidEmail(contact);
       const isPhone = isValidPhoneNumber(contact);
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map((error) => error.msg);
-        console.log(errors);
-        return res.status(400).json({ errors: errorMessages });
+        return res.status(400).json({ errors: errors.array() });
       }
 
-      const user = await User.findOne({
-        $or: [{ email: contact }, { phone: contact }],
+      const existingUser = await User.findOne({
+        $or: [
+          { email: isEmail ? contact.toLowerCase() : null },
+          { phone: isPhone ? contact : null },
+        ],
       });
 
+      if (existingUser && existingUser.isVerified) {
+        return res
+          .status(400)
+          .json({ error: "your contact info already exists" });
+      }
+
       if (
-        user &&
-        !user.isVerified &&
-        user.verificationCodeExpiration < Date.now()
+        existingUser &&
+        !existingUser.isVerified &&
+        existingUser.verificationCodeExpiration > Date.now()
+      ) {
+        return res.status(400).json({ error: "verification in progress..." });
+      }
+
+      if (
+        existingUser &&
+        !existingUser.isVerified &&
+        existingUser.verificationCodeExpiration < Date.now()
       ) {
         try {
-          await User.deleteOne({ _id: user._id });
+          await User.deleteOne({ _id: existingUser._id });
         } catch (error) {
           console.error("Error during deleting user", error);
         }
       }
-      const formattedPhone = formatPhoneNumber(contact);
 
       const newUser = new User({
         name,
-        email: isEmail ? contact : "",
-        phone: isPhone ? formattedPhone : "",
+        email: isEmail ? contact.toLowerCase() : "",
+        phone: isPhone ? contact : "",
         password,
         isVerified: false,
       });
@@ -167,9 +182,9 @@ module.exports = {
       await newUser.save();
 
       if (isPhone) {
-        await sendCodeToPhone(newUser, newUser.phone);
+        await sendCodeToPhone(newUser, contact);
       } else if (isEmail) {
-        await sendCodeToEmail(newUser, newUser.email);
+        await sendCodeToEmail(newUser, contact);
       }
 
       newUser.codesSent.count += 1;
@@ -177,89 +192,39 @@ module.exports = {
 
       res.json({ success: true });
     } catch (err) {
-      console.error("There was an error registering the user.", err);
       res
         .status(HTTP_STATUS.SERVER_ERROR)
         .json({ error: ERROR_MESSAGES.SERVER_ERROR });
     }
   },
 
-  async resendCode(req, res) {
-    try {
-      const { email, phone } = req.body;
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map((error) => error.msg);
-        return res.status(400).json({ errors: errorMessages });
-      }
-
-      const user = await User.findOne({ $or: [{ email }, { phone }] });
-      if (!user) {
-        return res
-          .status(HTTP_STATUS.NOT_FOUND)
-          .json({ message: "User not found" });
-      }
-
-      if (user.cooldownUntil) {
-        if (Date.now() > user.cooldownUntil) {
-          user.cooldownUntil = undefined;
-          user.codesSent.count = 1;
-
-          await user.save();
-        }
-      }
-
-      // Check cooldown
-      if (user.cooldownUntil && Date.now() < user.cooldownUntil) {
-        return res.send("Your requests are on cooldown");
-      }
-
-      // Set cooldown if needed
-      if (user.codesSent.count >= 3) {
-        const cooldownTime = Date.now() + 180000;
-        await User.updateOne(
-          { _id: user._id },
-          { $set: { cooldownUntil: cooldownTime } }
-        );
-        res.json({ onCooldown: true });
-      } else {
-        if (user.phone && !user.isVerified) {
-          await sendCodeToPhone(user, user.phone);
-        } else if (user.email && !user.isVerified) {
-          await sendCodeToEmail(user, user.email);
-        }
-        res.json({ success: true });
-      }
-
-      // Send code
-    } catch (err) {
-      console.error("Error resending verification code:", err);
-      res.status(HTTP_STATUS.SERVER_ERROR).send(ERROR_MESSAGES.SERVER_ERROR);
-    }
-  },
-
   async verifyUser(req, res) {
-    const { email, phone, verificationCode } = req.body;
+    const { contact, verificationCode } = req.body;
     let user;
-    if (email) {
-      user = await User.findOne({ email });
-    } else if (phone) {
-      user = await User.findOne({
-        $or: [{ phone }, { phone: formatPhoneNumber(phone) }],
-      });
-    }
 
     try {
+      if (!contact) {
+        return res
+          .status(404)
+          .json({ error: "register a user before verifying" });
+      }
+
+      if (contact.includes("@")) {
+        user = await User.findOne({ email: contact.toLowerCase() });
+      } else {
+        user = await User.findOne({ phone: contact });
+      }
+
       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ error: "User not found" });
       }
 
       if (user.isVerified) {
-        return res.status(400).send("User already verified");
+        return res.status(400).json({ error: "User already verified" });
       }
 
       if (user.verificationCodeExpiration < Date.now()) {
-        return res.status(400).json({ message: "Verification code expired" });
+        return res.status(400).json({ error: "Verification code expired" });
       }
 
       if (user.verificationCode === verificationCode) {
@@ -267,38 +232,78 @@ module.exports = {
           user.isVerified = true;
           user.verificationCode = "";
           user.verificationCodeExpiration = "";
-          user.codesSent.count = 1;
           await user.save();
 
           const tokens = await generateTokens(user);
+
           res.cookie("refreshToken", tokens.refreshToken, {
             httpOnly: true,
             sameSite: "strict",
             maxAge: 7 * 24 * 60 * 60 * 1000,
           });
 
-          res.json({
-            message: "Verification successful",
+          res.status(200).json({
+            message: "Verification successful...",
             accessToken: tokens.accessToken,
           });
         }
       } else {
-        return res.status(400).send("Invalid verification code");
+        return res.status(400).json({ error: "Invalid verification code" });
       }
     } catch (err) {
       console.error(err);
-      res.status(500).send("Server error");
+      res.status(500).json({ error: ERROR_MESSAGES.SERVER_ERROR });
+    }
+  },
+
+  async resendCode(req, res) {
+    const { contact } = req.body;
+    let user;
+
+    try {
+      if (!contact) {
+        return res
+          .status(404)
+          .json({ error: "register a user before verifying" });
+      }
+
+      if (contact.includes("@")) {
+        user = await User.findOne({ email: contact.toLowerCase() });
+      } else {
+        user = await User.findOne({ phone: contact });
+      }
+
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      if (user.isVerified) {
+        return res.status(400).json({ error: "User already verified" });
+      } else {
+        if (contact === user.phone) {
+          await sendCodeToPhone(user, contact);
+        } else if (contact.toLowerCase() === user.email) {
+          await sendCodeToEmail(user, contact);
+        }
+        res.status(200).json({
+          message: "code resent",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: ERROR_MESSAGES.SERVER_ERROR });
     }
   },
 
   async loginUser(req, res) {
-    const { contact, password } = req.body;
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
+      const { contact, password } = req.body;
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
       const user = await User.findOne({
         $or: [
           { email: contact },
@@ -309,12 +314,16 @@ module.exports = {
       });
 
       if (!user) {
-        return res.status(404).send("User not found");
+        return res.status(404).json({ error: "User not found" });
       }
-      // Compare the provided password with the user's hashed password
+
+      if (!user.isVerified) {
+        return res.status(404).json({ error: "User is not verified" });
+      }
+
       const isPasswordValid = await user.comparePassword(password);
       if (!isPasswordValid) {
-        return res.status(401).send("Invalid password");
+        return res.status(401).json({ error: "Invalid password" });
       }
 
       const tokens = await generateTokens(user);
@@ -324,10 +333,9 @@ module.exports = {
         sameSite: "strict", // Protect against CSRF
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
+
       res.json({
         message: "Login successful",
-        role: user.role,
-        userId: user._id,
         accessToken: tokens.accessToken,
       });
 
@@ -364,7 +372,7 @@ module.exports = {
       // }
     } catch (err) {
       console.error("Error during login:", err);
-      res.status(500).send("Server error");
+      res.status(500).json({ error: "Server error" });
     }
   },
 
@@ -378,7 +386,7 @@ module.exports = {
 
       const accessToken = req.headers["authorization"].split(" ")[1];
       if (!accessToken) {
-        return res.status(401).send("Access token missing");
+        return res.status(401).json({ error: "Access token missing" });
       }
 
       // Store the revoked access token in the database
@@ -399,7 +407,7 @@ module.exports = {
       });
     } catch (err) {
       console.error("Error during logout:", err);
-      res.status(500).send("Server error");
+      res.status(500).json({ error: "Server error" });
     }
   },
 

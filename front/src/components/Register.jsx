@@ -1,9 +1,8 @@
 /** @format */
 
-/** @format */
-
 import { useState } from "react";
 import axios from "axios";
+import { FaSpinner } from "react-icons/fa";
 
 const RegisterForm = () => {
   // Initialize the state variables for the form fields
@@ -21,46 +20,46 @@ const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
-  // Handle the change events for the form fields
   const handleNameChange = (e) => {
     setName(e.target.value);
-    setNameError(""); // Clear the name error when the user changes the input
+    setNameError("");
   };
 
   const handleContactChange = (e) => {
     setContact(e.target.value);
-    setContactError(""); // Clear the contact error when the user changes the input
+    setContactError("");
   };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
-    setPasswordError(""); // Clear the password error when the user changes the input
+    setPasswordError("");
   };
 
   const handleRepeatPasswordChange = (e) => {
     setRepeatPassword(e.target.value);
-    setRepeatPasswordError(""); // Clear the repeat password error when the user changes the input
+    setRepeatPasswordError("");
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the default browser behavior
-    // Create an object with the form data
+    e.preventDefault();
+    setLoading(true);
     const data = {
       name,
       contact,
       password,
       repeatPassword,
     };
-    // Send a post request to the server route using axios
     axios
       .post("http://localhost:3000/api/auth/register", data)
       .then((response) => {
         console.log(response.data);
-        setLoading(true);
+
+        setLoading(false);
         setRegistrationSuccess(true);
+        window.location.href = `/verify?contact=${encodeURIComponent(contact)}`;
       })
       .catch((error) => {
-        // Handle the error from the server
+        setLoading(false);
         console.error(error.response.data.errors);
 
         // Set the errors for each field based on the error messages from the server
@@ -98,67 +97,70 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="register-form">
-      <h1>Register</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={name}
-              onChange={handleNameChange}
-              required
-            />
-            {nameError && <p className="error">{nameError}</p>}{" "}
-          </div>
-          <div className="form-group">
-            <label htmlFor="contact">Email or Phone</label>
-            <input
-              type="text"
-              id="contact"
-              name="contact"
-              value={contact}
-              onChange={handleContactChange}
-              required
-            />
-            {contactError && <p className="error">{contactError}</p>}
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-            />
-            {passwordError && <p className="error">{passwordError}</p>}{" "}
-          </div>
-          <div className="form-group">
-            <label htmlFor="repeatPassword">Repeat Password</label>
-            <input
-              type="password"
-              id="repeatPassword"
-              name="repeatPassword"
-              value={repeatPassword}
-              onChange={handleRepeatPasswordChange}
-              required
-            />
-            {repeatPasswordError && (
-              <p className="error">{repeatPasswordError}</p>
-            )}{" "}
-          </div>
-          <button type="submit" className="auth-submit-button">
-            Register
-          </button>
-        </form>
-      )}
+    <div className="form-container">
+      <h1 className="form-title">ثبت نام</h1>
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="form-group">
+          <label htmlFor="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={name}
+            onChange={handleNameChange}
+            required
+            disabled={loading}
+          />
+          {nameError && <p className="error">{nameError}</p>}
+        </div>
+        <div className="form-group">
+          <label htmlFor="contact">Email or Phone</label>
+          <input
+            type="text"
+            id="contact"
+            name="contact"
+            value={contact}
+            onChange={handleContactChange}
+            required
+            disabled={loading}
+          />
+          {contactError && <p className="error">{contactError}</p>}
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            onChange={handlePasswordChange}
+            required
+            disabled={loading}
+          />
+          {passwordError && <p className="error">{passwordError}</p>}{" "}
+        </div>
+        <div className="form-group">
+          <label htmlFor="repeatPassword">Repeat Password</label>
+          <input
+            type="password"
+            id="repeatPassword"
+            name="repeatPassword"
+            value={repeatPassword}
+            onChange={handleRepeatPasswordChange}
+            required
+            disabled={loading}
+          />
+          {repeatPasswordError && (
+            <p className="error">{repeatPasswordError}</p>
+          )}{" "}
+        </div>
+        <button
+          type="submit"
+          className={`auth-submit-button ${loading ? "disabled-button" : ""}`}
+        >
+          {loading ? <FaSpinner className="loading-icon" /> : "ثبت نام"}
+        </button>
+      </form>
       {registrationSuccess && !loading && (
         <p className="success-message">Registration successful!</p>
       )}

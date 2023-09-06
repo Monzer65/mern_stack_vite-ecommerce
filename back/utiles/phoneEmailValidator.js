@@ -23,7 +23,7 @@ function isValidPhoneNumber(str) {
 }
 
 function isValidEmail(email) {
-  return validator.isEmail(email);
+  return validator.isEmail(email.trim().toLowerCase());
 }
 
 module.exports = { isValidEmail, isValidPhoneNumber };

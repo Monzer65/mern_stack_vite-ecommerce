@@ -209,39 +209,34 @@ option {
   font-size: 0.8rem;
 }
 
-.register-form,
-.login-container {
+.form-container {
   direction: rtl;
-  margin: 10px;
-  background-color: #c5c0c0;
-}
-
-.register-title,
-.login-title {
-  text-align: center;
-}
-
-.register-form,
-.login-form {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #c5c0c0;
 }
 
-.form-group,
-.login-form-group {
+.form-container form {
+  position: relative;
+}
+
+.form-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
   margin: 5px;
 }
 
-form label,
-.login-label {
+form label {
   display: inline-block;
   width: 150px;
   font-weight: bold;
 }
 
-.form-group input,
-.login-input {
+.form-group input {
   display: inline-block;
   width: 200px;
   border: 1px solid #ccc;
@@ -253,13 +248,76 @@ form label,
   color: red;
 }
 
-.auth-submit-button,
-.login-button {
+.success-message {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  background-color: white;
+  box-shadow: auto;
+}
+
+.success-icon {
+  color: green;
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.success {
+  color: green;
+  font-size: 18px;
+}
+
+.auth-submit-button {
   display: block;
   width: 100px;
   margin: 10px auto;
   background-color: #0078d4;
   color: white;
+}
+
+.go-to-link-button {
+  display: block;
+  width: 100px;
+  margin: 20px auto;
+  width: 200px;
+  background-color: #0078d4;
+  color: white;
+}
+
+.go-to-link-button a {
+  outline: none;
+  color: unset;
+}
+
+.go-to-link-button a:hover {
+  outline: none;
+  color: unset;
+}
+
+.resend-code-button {
+  text-decoration: underline;
+  border: none;
+  outline: none;
+  background: none;
+  color: blue;
+}
+
+.resend-code-button:hover {
+  background: none;
+  color: darkblue;
+}
+
+.disabled-button {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
 }
 
 .navigation {
@@ -445,6 +503,20 @@ form label,
   color: white;
   font-size: 1.2rem;
 }
+
+.loading-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: scale(1) rotate(0deg);
+  }
+  to {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
 @media (max-width: 985px) {
   .search-component {
     max-width: 400px;
@@ -547,4 +619,47 @@ form label,
   button {
     background-color: #f9f9f9;
   }
+}
+.dropbtn {
+  background-color: #4caf50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content,
+.dropdown:focus .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn,
+.dropdown:focus .dropbtn {
+  background-color: #3e8e41;
 }
