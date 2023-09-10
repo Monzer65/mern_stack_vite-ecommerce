@@ -3,6 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const RegisterForm = () => {
   // Initialize the state variables for the form fields
@@ -99,9 +100,9 @@ const RegisterForm = () => {
   return (
     <div className="form-container">
       <h1 className="form-title">ثبت نام</h1>
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate autoComplete="off">
         <div className="form-group">
-          <label htmlFor="name">Name</label>
+          <label htmlFor="name">نام</label>
           <input
             type="text"
             id="name"
@@ -111,10 +112,10 @@ const RegisterForm = () => {
             required
             disabled={loading}
           />
-          {nameError && <p className="error">{nameError}</p>}
+          {nameError && <p className="error">{nameError}</p>}{" "}
         </div>
         <div className="form-group">
-          <label htmlFor="contact">Email or Phone</label>
+          <label htmlFor="contact">تلفن یا ایمیل</label>
           <input
             type="text"
             id="contact"
@@ -124,10 +125,10 @@ const RegisterForm = () => {
             required
             disabled={loading}
           />
-          {contactError && <p className="error">{contactError}</p>}
+          {contactError && <p className="error">{contactError}</p>}{" "}
         </div>
         <div className="form-group">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">پسورد</label>
           <input
             type="password"
             id="password"
@@ -140,7 +141,7 @@ const RegisterForm = () => {
           {passwordError && <p className="error">{passwordError}</p>}{" "}
         </div>
         <div className="form-group">
-          <label htmlFor="repeatPassword">Repeat Password</label>
+          <label htmlFor="repeatPassword">تکرار پسورد</label>
           <input
             type="password"
             id="repeatPassword"
@@ -158,12 +159,15 @@ const RegisterForm = () => {
           type="submit"
           className={`auth-submit-button ${loading ? "disabled-button" : ""}`}
         >
-          {loading ? <FaSpinner className="loading-icon" /> : "ثبت نام"}
+          {loading ? <FaSpinner className="loading-icon" /> : "ارسال"}
         </button>
       </form>
       {registrationSuccess && !loading && (
         <p className="success-message">Registration successful!</p>
       )}
+      <p>
+        حساب دارید؟ <Link to="/login">وارد شوید</Link>
+      </p>
     </div>
   );
 };

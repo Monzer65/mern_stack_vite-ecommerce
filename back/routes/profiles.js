@@ -27,7 +27,7 @@ router.put(
 );
 
 router.post(
-  "/verify-email",
+  "/update-email/verify-email",
   authMiddleware.verifyAndRevokeAccessToken,
   profileController.verifyAndUpdateEmail
 );
@@ -40,7 +40,7 @@ router.put(
 );
 
 router.post(
-  "/verify-phone",
+  "/update-phone/verify-phone",
   authMiddleware.verifyAndRevokeAccessToken,
   profileController.verifyAndUpdatePhone
 );

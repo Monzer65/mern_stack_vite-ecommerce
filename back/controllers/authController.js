@@ -17,46 +17,6 @@ const SMS_USERNAME = process.env.SMS_USERNAME;
 const SMS_PASSWORD = process.env.SMS_PASSWORD;
 const EMAIL_ADDRESS = process.env.EMAIL_ADDRESS;
 
-const HTTP_STATUS = {
-  // Successful responses
-  OK: 200,
-  CREATED: 201,
-  NO_CONTENT: 204,
-  // Redirection messages
-  MOVED_PERMANENTLY: 301,
-  FOUND: 302,
-  NOT_MODIFIED: 304,
-  // Client error responses
-  BAD_REQUEST: 400,
-  UNAUTHORIZED: 401,
-  FORBIDDEN: 403,
-  NOT_FOUND: 404,
-  METHOD_NOT_ALLOWED: 405,
-  CONFLICT: 409,
-  TOO_MANY_REQUESTS: 429,
-  // Server error responses
-  SERVER_ERROR: 500,
-  NOT_IMPLEMENTED: 501,
-};
-
-const ERROR_MESSAGES = {
-  // Client error messages
-  INVALID_INPUT: "Invalid input data",
-  EMAIL_PHONE_REQUIRED: "At least one of email or phone must be provided",
-  USER_ALREADY_VERIFIED: "User already verified",
-  VERIFICATION_IN_PROGRESS: "Verification in progress. Use verify route.",
-  VERIFICATION_CODE_EXPIRED: "Code expired, try a new one",
-  UNAUTHORIZED: "You are not authorized to access this resource",
-  FORBIDDEN: "You are forbidden from performing this action",
-  NOT_FOUND: "The resource you requested was not found",
-  METHOD_NOT_ALLOWED: "The method you used is not allowed for this resource",
-  CONFLICT: "There is a conflict with the current state of the resource",
-  TOO_MANY_REQUESTS: "You have exceeded the rate limit for this service",
-  // Server error messages
-  SERVER_ERROR: "Server error",
-  NOT_IMPLEMENTED: "The feature you requested is not implemented yet",
-};
-
 async function sendCodeToEmail(user, contact) {
   const { verificationCode, verificationCodeExpiration } =
     generateVerificationCode();
@@ -104,15 +64,6 @@ async function sendCodeToPhone(user, contact) {
   );
 }
 
-function getAnonymousCartFromLocalStorage() {
-  const cartJSON = localStorage.getItem("anonymousCart");
-  return cartJSON ? JSON.parse(cartJSON) : [];
-}
-
-function clearAnonymousCartFromLocalStorage() {
-  localStorage.removeItem("anonymousCart");
-}
-
 function formatPhoneNumber(phone) {
   // Normalize the phone number to remove any non-digit characters
   const normalizedPhone = phone.replace(/\D/g, "");
@@ -146,9 +97,7 @@ module.exports = {
       });
 
       if (existingUser && existingUser.isVerified) {
-        return res
-          .status(400)
-          .json({ error: "your contact info already exists" });
+        return res.status(400).json({ error: "کاربر موجود است" });
       }
 
       if (
@@ -156,7 +105,9 @@ module.exports = {
         !existingUser.isVerified &&
         existingUser.verificationCodeExpiration > Date.now()
       ) {
-        return res.status(400).json({ error: "verification in progress..." });
+        return res.status(400).json({
+          error: "شما قبلا درخواست داده اید و در مرحله تایید می باشید...",
+        });
       }
 
       if (
@@ -187,14 +138,9 @@ module.exports = {
         await sendCodeToEmail(newUser, contact);
       }
 
-      newUser.codesSent.count += 1;
-      await newUser.save();
-
       res.json({ success: true });
     } catch (err) {
-      res
-        .status(HTTP_STATUS.SERVER_ERROR)
-        .json({ error: ERROR_MESSAGES.SERVER_ERROR });
+      res.status(500).json({ error: "server Error" });
     }
   },
 
@@ -204,9 +150,7 @@ module.exports = {
 
     try {
       if (!contact) {
-        return res
-          .status(404)
-          .json({ error: "register a user before verifying" });
+        return res.status(404).json({ error: "اول ثبت نام کنید" });
       }
 
       if (contact.includes("@")) {
@@ -216,15 +160,15 @@ module.exports = {
       }
 
       if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        return res.status(404).json({ error: "کاربر پیدا نشد" });
       }
 
       if (user.isVerified) {
-        return res.status(400).json({ error: "User already verified" });
+        return res.status(400).json({ error: "کاربر قبلا تایید شده است" });
       }
 
       if (user.verificationCodeExpiration < Date.now()) {
-        return res.status(400).json({ error: "Verification code expired" });
+        return res.status(400).json({ error: "کد تایید منقضی شده است" });
       }
 
       if (user.verificationCode === verificationCode) {
@@ -243,16 +187,16 @@ module.exports = {
           });
 
           res.status(200).json({
-            message: "Verification successful...",
+            message: "تایید موفق",
             accessToken: tokens.accessToken,
           });
         }
       } else {
-        return res.status(400).json({ error: "Invalid verification code" });
+        return res.status(400).json({ error: "کد تایید نامعتبر است" });
       }
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: ERROR_MESSAGES.SERVER_ERROR });
+      res.status(500).json({ error: "server error" });
     }
   },
 
@@ -262,9 +206,7 @@ module.exports = {
 
     try {
       if (!contact) {
-        return res
-          .status(404)
-          .json({ error: "register a user before verifying" });
+        return res.status(404).json({ error: "هنوز ثبت نام نکرده اید" });
       }
 
       if (contact.includes("@")) {
@@ -274,11 +216,11 @@ module.exports = {
       }
 
       if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        return res.status(404).json({ error: "کاربر پیدا نشد" });
       }
 
       if (user.isVerified) {
-        return res.status(400).json({ error: "User already verified" });
+        return res.status(400).json({ error: "کاربر قبلا تایید شده است" });
       } else {
         if (contact === user.phone) {
           await sendCodeToPhone(user, contact);
@@ -286,12 +228,12 @@ module.exports = {
           await sendCodeToEmail(user, contact);
         }
         res.status(200).json({
-          message: "code resent",
+          message: "کد با موفقیت ارسال شد",
         });
       }
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: ERROR_MESSAGES.SERVER_ERROR });
+      res.status(500).json({ error: "server error" });
     }
   },
 
@@ -314,16 +256,18 @@ module.exports = {
       });
 
       if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        return res.status(404).json({ error: "کاربر پیدا نشد" });
       }
 
       if (!user.isVerified) {
-        return res.status(404).json({ error: "User is not verified" });
+        return res.status(404).json({ error: "کاربر هنوز تایید نشده است" });
       }
 
       const isPasswordValid = await user.comparePassword(password);
       if (!isPasswordValid) {
-        return res.status(401).json({ error: "Invalid password" });
+        return res
+          .status(401)
+          .json({ error: "نام کاربری یا پسورد نامعتبر است" });
       }
 
       const tokens = await generateTokens(user);
@@ -335,41 +279,9 @@ module.exports = {
       });
 
       res.json({
-        message: "Login successful",
+        message: "ورود موفق",
         accessToken: tokens.accessToken,
       });
-
-      // const anonymousCart = getAnonymousCartFromLocalStorage(); // Retrieve from local storage
-
-      // if (anonymousCart.length > 0) {
-      //   const existingUserCart = await Cart.findOne({ userId: user._id });
-
-      //   if (existingUserCart) {
-      //     // Merge anonymous cart with user's existing cart
-      //     anonymousCart.forEach((item) => {
-      //       const existingItemIndex = existingUserCart.products.findIndex(
-      //         (p) => p.productId.toString() === item.productId
-      //       );
-      //       if (existingItemIndex !== -1) {
-      //         existingUserCart.products[existingItemIndex].quantity +=
-      //           item.quantity;
-      //       } else {
-      //         existingUserCart.products.push({
-      //           productId: item.productId,
-      //           quantity: item.quantity,
-      //         });
-      //       }
-      //     });
-
-      //     await existingUserCart.save();
-      // } else {
-      //   // Create a new cart with anonymous cart items
-      //   await Cart.create({ userId: user._id, products: anonymousCart });
-      // }
-
-      // // Clear anonymous cart data from local storage
-      // clearAnonymousCartFromLocalStorage();
-      // }
     } catch (err) {
       console.error("Error during login:", err);
       res.status(500).json({ error: "Server error" });
@@ -381,12 +293,12 @@ module.exports = {
       const userId = req.user.userId;
       const user = await User.findById(userId);
       if (!user) {
-        return res.status(404).send("User not found");
+        return res.status(404).send("کاربر پیدا نشد");
       }
 
       const accessToken = req.headers["authorization"].split(" ")[1];
       if (!accessToken) {
-        return res.status(401).json({ error: "Access token missing" });
+        return res.status(401).json({ error: "توکن یافت نشد" });
       }
 
       // Store the revoked access token in the database
@@ -403,7 +315,7 @@ module.exports = {
 
       res.clearCookie("refreshToken");
       res.json({
-        message: "Logout successful",
+        message: "خروج موفق",
       });
     } catch (err) {
       console.error("Error during logout:", err);
@@ -414,17 +326,17 @@ module.exports = {
   async refreshToken(req, res) {
     const { refreshToken } = req.cookies;
     if (!refreshToken) {
-      return res.status(401).send("Refresh token missing");
+      return res.status(401).send("توکن رفرش یافت نشد");
     }
     try {
       const payload = jwt.verify(refreshToken, refreshSecretKey);
       // Find the user associated with the refresh token
       const user = await User.findById(payload.userId);
       if (!user) {
-        return res.status(401).send("User not found");
+        return res.status(401).send("کاربر یافت نشد");
       }
       if (user.refreshTokenVersion !== payload.version) {
-        return res.status(401).send("Invalid refresh token");
+        return res.status(401).send("توکن رفرش نامعتبر است");
       }
 
       const accessToken = req.headers.authorization.split(" ")[1];

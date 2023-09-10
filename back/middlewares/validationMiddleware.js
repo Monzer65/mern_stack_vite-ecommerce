@@ -74,7 +74,6 @@ module.exports = {
   ],
 
   validateUpdateName: [
-    // Add validation rules using body() function
     body("name")
       .trim()
       .notEmpty()
@@ -112,6 +111,7 @@ module.exports = {
       .trim()
       .isLength({ min: 4, max: 20 })
       .withMessage("Postal phone must be between 4 and 20 characters")
+      .bail()
       .isMobilePhone()
       .withMessage("Invalid phone number"),
     body("apartment")

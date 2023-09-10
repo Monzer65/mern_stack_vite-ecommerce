@@ -1,6 +1,7 @@
 /** @format */
 
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 function SearchResult({ results, error }) {
   return (
@@ -12,10 +13,17 @@ function SearchResult({ results, error }) {
       ) : (
         results.map((result, index) => (
           <div className="result" key={index}>
-            <h2>{result.name}</h2>
-            <h4>{`manufacturer: ${result.manufacturer.manufacturerName}`}</h4>
-            <p>{`compatibility: ${result.compatibility.make}`}</p>
-            <img src={result.imageUrl} alt="" />
+            <Link
+              to={{
+                pathname: `/products/${result._id}`,
+                state: { result },
+              }}
+            >
+              <h2>{result.name}</h2>
+              <h4>{`manufacturer: ${result.manufacturer.manufacturerName}`}</h4>
+              <p>{`compatibility: ${result.compatibility.make}`}</p>
+              <img src={result.imageUrl} alt="" />
+            </Link>
           </div>
         ))
       )}

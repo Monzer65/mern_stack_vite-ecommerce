@@ -72,29 +72,65 @@ module.exports = {
   async getProducts(req, res) {
     try {
       const page = parseInt(req.query.page) || 1;
-      const perPage = 20;
-      const options = {
-        page,
-        limit: perPage,
-        sort: { date_added_to_store: -1 },
-        select: "images.0 name price",
+      const limit = parseInt(req.query.limit) || 20;
+      const search = req.query.search || "";
+      const sort = req.query.sort || "date_added_to_store";
+
+      // Initialize the filter object
+      let filter = {
+        name: { $regex: search, $options: "i" },
       };
 
-      const categoryId = req.query.categoryId;
-      const subcategory = req.query.subcategory;
-
-      let query = categoryId ? { category: categoryId } : {};
-
-      if (subcategory) {
-        query.subcategories = subcategory;
+      // Add filters for category, featured, make, model year range, and condition
+      if (req.query.category) {
+        filter.category = req.query.category;
       }
 
-      const products = await Product.paginate(query, options);
+      if (req.query.featured) {
+        filter.featured = req.query.featured === "true"; // Convert to boolean
+      }
 
-      res.json(products);
-    } catch (error) {
-      console.error("Error during product retrieval:", error);
-      res.status(500).send("Server error");
+      if (req.query.make) {
+        filter["compatibility.make"] = req.query.make;
+      }
+
+      if (req.query.models) {
+        filter["compatibility.models"] = { $in: req.query.models.split(",") };
+      }
+
+      if (req.query.minYear && req.query.maxYear) {
+        filter["compatibility.years"] = {
+          $gte: parseInt(req.query.minYear),
+          $lte: parseInt(req.query.maxYear),
+        };
+      }
+
+      if (req.query.condition) {
+        filter.condition = req.query.condition;
+      }
+
+      const products = await Product.find(filter)
+        .sort(sort)
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+      const totalProducts = await Product.countDocuments(filter);
+
+      const totalPages = Math.ceil(totalProducts / limit);
+      const currentPage = page;
+
+      const response = {
+        error: false,
+        count: totalProducts,
+        page: currentPage,
+        limit: limit,
+        products: products,
+      };
+
+      res.status(200).json(response);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: true, message: "Server error" });
     }
   },
 

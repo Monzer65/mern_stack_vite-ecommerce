@@ -1,17 +1,17 @@
 /** @format */
 
-import useAxios from "./UseAxios";
+import axios from "axios";
 
 const Cart = () => {
+  const accessToken = localStorage.getItem("accessToken");
+
   const {
     response: cart,
     error,
     loading,
-  } = useAxios({
-    url: "http://localhost:3000/api/cart",
-    method: "GET",
+  } = axios.get("http://localhost:3000/api/cart", {
     headers: {
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
     },
   });
 

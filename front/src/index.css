@@ -212,35 +212,77 @@ option {
 .form-container {
   direction: rtl;
   display: flex;
+  padding-bottom: 2rem;
   flex-direction: column;
   align-items: center;
   background-color: #c5c0c0;
 }
 
 .form-container form {
-  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: max-content;
+  padding: 2rem 1rem;
+  flex-direction: column;
+  gap: 40px;
+  border-radius: 15px;
+  background: #e3e3e3;
+  box-shadow: 16px 16px 32px #c8c8c8, -16px -16px 32px #fefefe;
+  border-radius: 8px;
 }
 
 .form-title {
-  text-align: center;
-  margin-bottom: 20px;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: block;
+  font-weight: bold;
+  font-size: x-large;
+  margin-block: 1.5em;
 }
 
 .form-group {
-  margin: 5px;
+  position: relative;
+  width: 250px;
 }
 
 form label {
-  display: inline-block;
-  width: 150px;
-  font-weight: bold;
+  direction: rtl;
+  position: absolute;
+  top: -50%;
+  right: 0;
+  transform: translateY(-8px);
+  margin-left: 10px;
+  padding: 10px;
+  pointer-events: none;
+  font-size: 12px;
+  color: #000;
+  text-transform: uppercase;
+  transition: 0.5s;
+  letter-spacing: 3px;
+  border-radius: 8px;
+  z-index: 1;
 }
 
 .form-group input {
-  display: inline-block;
-  width: 200px;
-  border: 1px solid #ccc;
-  padding: 5px;
+  width: 100%;
+  padding: 10px;
+  outline: none;
+  border: none;
+  color: #000;
+  font-size: 1em;
+  background: transparent;
+  border-left: 2px solid #000;
+  border-bottom: 2px solid #000;
+  transition: 0.1s;
+  border-bottom-left-radius: 8px;
+}
+
+.form-group input:focus,
+.form-group input:valid {
+  border: 2px solid #000;
+  border-radius: 8px;
 }
 
 .form-group p {
@@ -275,10 +317,21 @@ form label {
 }
 
 .auth-submit-button {
-  display: block;
+  height: 45px;
   width: 100px;
-  margin: 10px auto;
-  background-color: #0078d4;
+  border-radius: 5px;
+  border: 2px solid #000;
+  cursor: pointer;
+  background-color: transparent;
+  transition: 0.5s;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-bottom: 3em;
+}
+
+.auth-submit-button:hover {
+  background-color: rgb(0, 0, 0);
   color: white;
 }
 
@@ -356,36 +409,26 @@ form label {
 }
 
 .slide-container {
+  position: relative;
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.slide-container {
-  position: relative;
-  width: 100%;
   height: 400px;
+  max-width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .slide {
   text-align: center;
-  border: 1px solid #ddd;
-  border-radius: 5px;
   width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .slide img {
-  max-width: 100%;
   display: block;
-  margin: 0 auto;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  margin-inline: auto;
 }
 
 .slide h3 {
@@ -393,7 +436,7 @@ form label {
   z-index: 1;
   right: 10%;
   top: 20%;
-  background-color: #8a8282;
+  background-color: #81c958;
   padding: 1rem;
 }
 
@@ -504,10 +547,35 @@ form label {
   font-size: 1.2rem;
 }
 
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 .loading-icon {
   animation: spin 1s linear infinite;
 }
+.loading-icon-products {
+  animation: spin 1s linear infinite;
+  font-size: 4rem;
+}
 
+.product-list-contaoner {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  box-shadow: 1px 1px 5px rgb(207, 205, 205);
+  margin: 1rem auto;
+}
+.product-list-contaoner ul {
+  display: grid;
+  cursor: pointer;
+}
+.product-list-contaoner ul li img {
+  display: block;
+  width: 200px;
+}
 @keyframes spin {
   from {
     transform: scale(1) rotate(0deg);
@@ -565,12 +633,7 @@ form label {
 
 @media (max-width: 768px) {
   .navigation-container {
-    position: absolute;
-    left: 0;
-    top: 8.2rem;
     background-color: #213547;
-    width: 100%;
-    height: 100%;
   }
   .bar {
     background-color: red;
@@ -598,13 +661,6 @@ form label {
   }
   .hamburger-menu {
     display: block;
-  }
-  .slide {
-    padding: 10px;
-  }
-
-  .slide img {
-    max-width: 100%;
   }
 }
 

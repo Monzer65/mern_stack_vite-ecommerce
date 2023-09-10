@@ -25,6 +25,7 @@ module.exports = {
       res.status(500).send("Server error");
     }
   },
+
   async createCategory(req, res) {
     try {
       const userId = req.user.userId;

@@ -6,6 +6,9 @@ import axios from "axios";
 // Create an axios instance with a base URL
 const axiosInstance = axios.create({
   baseURL: "http://localhost:3000/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 // Use an interceptor to set the access token to the Authorization header
@@ -50,7 +53,7 @@ axiosInstance.interceptors.response.use(
 
         // Send a POST request to refresh the access token
         const response = await axios.post(
-          "http://localhost:3000/api/auth/refresh",
+          "http://localhost:3000/api/auth/refresh-token",
           {
             refreshToken,
           }

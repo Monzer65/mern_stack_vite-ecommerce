@@ -24,7 +24,7 @@ router.get(
 
 router.post(
   "/:productId/addReviews",
-  authMiddleware.verifyAndRevokeAccessToken,
+  // authMiddleware.verifyAndRevokeAccessToken,
   validationMiddleware.validateReviewAdd,
   reviewController.addReview
 );

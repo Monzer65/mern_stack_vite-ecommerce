@@ -159,6 +159,7 @@ module.exports = {
         selectedFields.email = profile.email;
         selectedFields.phone = profile.phone;
         selectedFields.postalCode = profile.postalCode;
+        selectedFields.postalPhone = profile.postalPhone;
         selectedFields.apartment = profile.apartment;
         selectedFields.street = profile.street;
         selectedFields.city = profile.city;

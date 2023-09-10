@@ -122,6 +122,7 @@ const VerificationForm = () => {
           value={verificationCode}
           onChange={handleVerificationCodeChange}
           required
+          style={{ direction: "ltr" }}
         />
         {verifyError && <p className="error">{verifyError.error}</p>}
 
@@ -132,7 +133,7 @@ const VerificationForm = () => {
             verifyLoading || resendLoading ? "disabled-button" : ""
           }`}
         >
-          {verifyLoading ? <FaSpinner className="loading-icon" /> : "Verify"}
+          {verifyLoading ? <FaSpinner className="loading-icon" /> : "ارسال"}
         </button>
       </form>
 

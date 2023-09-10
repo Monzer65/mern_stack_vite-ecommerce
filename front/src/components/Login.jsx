@@ -56,7 +56,14 @@ const Login = () => {
         .catch((error) => {
           setLoading(false);
           console.error(error);
-
+          if (
+            error.response.data.error &&
+            error.response.data.error.includes("password")
+          ) {
+            setPasswordError(error.response.data.error);
+          } else {
+            setContactError(error.response.data.error);
+          }
           if (error.response.data.errors) {
             for (let err of error.response.data.errors) {
               switch (err.path) {
@@ -81,7 +88,7 @@ const Login = () => {
   return (
     <div className="form-container">
       <h2 className="form-title">ورود</h2>
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate autoComplete="off">
         <div className="form-group">
           <label htmlFor="contact">Email or Phone</label>
           <input
@@ -112,9 +119,10 @@ const Login = () => {
           {loading ? <FaSpinner className="loading-icon" /> : "ورود"}
         </button>
       </form>
-      <button className="go-to-link-button">
-        <Link to="/register">ساخت حساب کاربری</Link>
-      </button>
+      <p>
+        ثبت نام نکرده اید؟
+        <Link to="/register"> حساب کاربری بسازید </Link>
+      </p>
     </div>
   );
 };
