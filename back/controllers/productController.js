@@ -23,31 +23,29 @@ const REORDER_THRESHOLD = 15;
 // };
 
 // A helper function that takes a parent category id as an input and returns an array of all the descendant category ids, including the parent itself
-const getDescendantCategories = async (parentCategoryId) => {
-  let descendantCategoryIds = [];
+const getDescendants = async (category) => {
+  // Initialize an empty array to store the results
+  let descendants = [];
 
-  // If parentCategoryId is null or undefined, return an empty array
-  if (!parentCategoryId) {
-    return descendantCategoryIds;
-  }
+  // Use a recursive function to find all the children and grandchildren of the category
+  const findChildren = async (parent) => {
+    // Find all the categories that have the parent as their parent field
+    const children = await Category.find({ parent: parent });
 
-  descendantCategoryIds.push(parentCategoryId);
+    // If there are any children, add them to the descendants array and call the function again for each child
+    if (children.length > 0) {
+      descendants.push(...children);
+      for (let child of children) {
+        await findChildren(child._id);
+      }
+    }
+  };
 
-  // Find all the direct subcategories of the parentCategoryId using Mongoose
-  const subcategories = await Category.find({ parent: parentCategoryId });
+  // Call the recursive function with the given category as the initial parent
+  await findChildren(category);
 
-  // Loop through each subcategory and call this function recursively
-  for (let subcategory of subcategories) {
-    // Get all the descendant categories of this subcategory
-    const subDescendantCategories = await getDescendantCategories(
-      subcategory._id
-    );
-
-    // Push them to the descendantCategoryIds array
-    descendantCategoryIds.push(...subDescendantCategories);
-  }
-
-  return descendantCategoryIds;
+  // Return the descendants array
+  return descendants;
 };
 
 module.exports = {
@@ -71,66 +69,60 @@ module.exports = {
 
   async getProducts(req, res) {
     try {
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 20;
-      const search = req.query.search || "";
-      const sort = req.query.sort || "date_added_to_store";
+      const { category, conditions, brands, search, sort, page } = req.query;
+      const perPage = 20;
+      const skip = (page - 1) * perPage;
 
-      // Initialize the filter object
-      let filter = {
-        name: { $regex: search, $options: "i" },
-      };
-
-      // Add filters for category, featured, make, model year range, and condition
-      if (req.query.category) {
-        filter.category = req.query.category;
+      // Build the filter object based on query parameters
+      const filter = {};
+      if (category) {
+        const descendantCategories = await getDescendants(category);
+        filter.category = { $in: [...descendantCategories, category] };
       }
-
-      if (req.query.featured) {
-        filter.featured = req.query.featured === "true"; // Convert to boolean
+      if (conditions) {
+        filter.condition = {
+          $in: Array.isArray(conditions) ? conditions : [conditions],
+        };
       }
-
-      if (req.query.make) {
-        filter["compatibility.make"] = req.query.make;
-      }
-
-      if (req.query.models) {
-        filter["compatibility.models"] = { $in: req.query.models.split(",") };
-      }
-
-      if (req.query.minYear && req.query.maxYear) {
-        filter["compatibility.years"] = {
-          $gte: parseInt(req.query.minYear),
-          $lte: parseInt(req.query.maxYear),
+      if (brands) {
+        filter["manufacturer.brand"] = {
+          $in: Array.isArray(brands) ? brands : [brands],
         };
       }
 
-      if (req.query.condition) {
-        filter.condition = req.query.condition;
+      if (search) {
+        // Use $regex to perform a case-insensitive search
+        filter.$or = [
+          { name: { $regex: search, $options: "i" } }, // Search in product name
+          { description: { $regex: search, $options: "i" } }, // Search in product description
+          { tags: { $in: [search] } }, // Search in tags
+          // Add more fields if needed
+        ];
+      }
+
+      const count = await Product.countDocuments(filter);
+
+      // Build the sort options based on query parameters
+      const sortOptions = {};
+      if (sort === "priceLowToHigh") {
+        sortOptions.price = 1;
+      } else if (sort === "priceHighToLow") {
+        sortOptions.price = -1;
+      } else if (sort === "newestFirst") {
+        sortOptions.date_added_to_store = -1;
+      } else if (sort === "featuredFirst") {
+        sortOptions.featured = -1;
       }
 
       const products = await Product.find(filter)
-        .sort(sort)
-        .skip((page - 1) * limit)
-        .limit(limit);
+        .sort(sortOptions)
+        .skip(skip)
+        .limit(perPage);
 
-      const totalProducts = await Product.countDocuments(filter);
-
-      const totalPages = Math.ceil(totalProducts / limit);
-      const currentPage = page;
-
-      const response = {
-        error: false,
-        count: totalProducts,
-        page: currentPage,
-        limit: limit,
-        products: products,
-      };
-
-      res.status(200).json(response);
+      res.json(products, count);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: true, message: "Server error" });
+      res.status(500).send("Server error");
     }
   },
 
@@ -149,6 +141,18 @@ module.exports = {
       res.json(product);
     } catch (error) {
       console.error("Error during product retrieval:", error);
+      res.status(500).send("Server error");
+    }
+  },
+
+  async getConditionsAndBrands(req, res) {
+    try {
+      const conditions = await Product.distinct("condition");
+      const brands = await Product.distinct("manufacturer.brand");
+
+      res.json({ conditions, brands });
+    } catch (err) {
+      console.error(err);
       res.status(500).send("Server error");
     }
   },

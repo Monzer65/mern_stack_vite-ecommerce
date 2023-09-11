@@ -9,6 +9,8 @@ const validationMiddleware = require("../middlewares/validationMiddleware");
 
 router.get("/", productController.getProducts);
 
+router.get("/conditions-and-brands", productController.getConditionsAndBrands);
+
 router.get("/featured", productController.getFeaturedProducts);
 
 router.get("/search", productController.searchProduct);

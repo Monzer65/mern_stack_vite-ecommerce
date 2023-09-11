@@ -21,6 +21,7 @@ import PhoneVerificationForm from "./components/VerifyNewPhone";
 import EmailVerificationForm from "./components/VerifyNewEmail";
 import AddressUpdateForm from "./components/UpdateAddress";
 import ProductList from "./components/ProductList";
+import ProductDetail from "./components/ProductDetail";
 
 function App() {
   const [results, setResults] = useState([]);
@@ -39,6 +40,7 @@ function App() {
         />
         <Route path="/cart" element={<Cart />} />
         <Route path="/products" element={<ProductList />} />
+        <Route path="/product/:productId" element={<ProductDetail />} />
 
         {/* Auth routes: */}
         <Route path="/register" element={<RegisterForm />} />

@@ -576,6 +576,15 @@ form label {
   display: block;
   width: 200px;
 }
+
+.Product-detal-container {
+  padding: 2rem;
+}
+
+.Product-detal-container img {
+  display: block;
+  max-width: 350px;
+}
 @keyframes spin {
   from {
     transform: scale(1) rotate(0deg);

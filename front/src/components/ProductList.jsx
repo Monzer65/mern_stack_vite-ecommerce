@@ -1,7 +1,7 @@
 /** @format */
 
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { ImSpinner2 } from "react-icons/im";
 
@@ -13,31 +13,16 @@ function ProductList() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("sort");
+  const [sort, setSort] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [loading, setLoading] = useState(true); // Set loading to true initially
+  const [selectedConditions, setSelectedConditions] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [conditions, setConditions] = useState([]);
+  const [brands, setBrands] = useState([]);
 
-  const fetchProducts = async () => {
-    try {
-      const { data } = await axios.get("http://localhost:3000/api/products", {
-        params: {
-          page,
-          limit,
-          search,
-          sort,
-          category: selectedCategory,
-        },
-      });
-      setProducts(data.products);
-      setTotalPages(Math.ceil(data.count / limit));
-      setLoading(false);
-    } catch (err) {
-      setLoading(false); // Set loading to false in case of an error
-      console.log(err);
-    }
-  };
+  const [loading, setLoading] = useState(true);
 
   const fetchCategories = async () => {
     try {
@@ -48,49 +33,126 @@ function ProductList() {
     }
   };
 
-  function updateUrl() {
+  const fetchConditionsAndBrands = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:3000/api/products/conditions-and-brands"
+      );
+      setConditions(data.conditions);
+      setBrands(data.brands);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:3000/api/products", {
+        params: {
+          page,
+          limit,
+          search,
+          sort,
+          category: selectedCategory,
+          conditions: selectedConditions,
+          brands: selectedBrands,
+        },
+      });
+
+      setProducts(data);
+      const totalCount = data.count;
+      const totalPagesCount = Math.ceil(totalCount / limit);
+      setTotalPages(totalPagesCount);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      console.log(err);
+    }
+  };
+
+  const updateUrl = () => {
     const queryParams = {
       page,
       limit,
       search,
       sort,
-      selectedCategory,
+      category: selectedCategory,
+      conditions: selectedConditions,
+      brands: selectedBrands,
     };
 
-    navigate({
-      pathname: location.pathname,
-      search: new URLSearchParams(queryParams).toString(),
-    });
-  }
+    const flattenedQueryParams = Object.entries(queryParams).reduce(
+      (acc, [key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            acc.push([key, item]);
+          });
+        } else {
+          acc.push([key, value]);
+        }
+        return acc;
+      },
+      []
+    );
 
-  const handleSearch = (e) => {
+    const queryString = flattenedQueryParams
+      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+      .join("&");
+
+    navigate(`${location.pathname}?${queryString}`, { replace: true });
+  };
+
+  const handleConditionChange = (condition) => {
+    setSort("");
+    setPage(1);
+    setLimit(20);
+    const updatedConditions = selectedConditions.includes(condition)
+      ? selectedConditions.filter((c) => c !== condition)
+      : [...selectedConditions, condition];
+    setSelectedConditions(updatedConditions);
+  };
+
+  const handleBrandChange = (brand) => {
+    setSort("");
+    setPage(1);
+    setLimit(10);
+    const updatedBrands = selectedBrands.includes(brand)
+      ? selectedBrands.filter((b) => b !== brand)
+      : [...selectedBrands, brand];
+    setSelectedBrands(updatedBrands);
+  };
+
+  const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
-    fetchProducts();
-    updateUrl();
+    await fetchProducts();
+    setSelectedCategory("");
+    setSort("");
+    setPage(1);
+    setLimit(20);
   };
 
   useEffect(() => {
     fetchCategories();
+    fetchConditionsAndBrands();
   }, []);
 
   useEffect(() => {
     fetchProducts();
-  }, [page, limit, sort, selectedCategory]);
+    setLoading(true);
+    updateUrl();
+  }, [page, limit, sort, selectedCategory, selectedConditions, selectedBrands]);
 
   useEffect(() => {
-    // Update state based on URL parameters
     const params = new URLSearchParams(location.search);
     setPage(Number(params.get("page")) || 1);
     setLimit(Number(params.get("limit")) || 10);
     setSearch(params.get("search") || "");
     setSort(params.get("sort") || "");
-    setSelectedCategory(params.get("selectedCategory") || "");
+    setSelectedCategory(params.get("category") || "");
+    setSelectedConditions(params.getAll("conditions") || []);
+    setSelectedBrands(params.getAll("brands") || []);
   }, []);
-
-  useEffect(() => {
-    setLoading(true);
-  }, [page, limit, sort, selectedCategory]);
 
   return (
     <div>
@@ -101,31 +163,17 @@ function ProductList() {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setLoading(false);
           }}
         />
         <button type="submit">Search</button>
       </form>
       <select
-        value={sort}
-        onChange={(e) => {
-          updateUrl();
-          setSort(e.target.value);
-        }}
-      >
-        <option value="date_added_to_store">Newest</option>
-        <option value="price">Price (Low to High)</option>
-        <option value="-price">Price (High to Low)</option>
-        <option value="featured">Featured</option>
-      </select>
-      <select
         value={selectedCategory}
         onChange={(e) => {
-          setSort("sort");
-          setPage(1);
-          setLimit(10);
           setSelectedCategory(e.target.value);
-          updateUrl();
+          setSort("");
+          setPage(1);
+          setLimit(20);
         }}
       >
         <option value="">All Categories</option>
@@ -135,21 +183,66 @@ function ProductList() {
           </option>
         ))}
       </select>
+      <select
+        value={sort}
+        onChange={(e) => {
+          setSort(e.target.value);
+          setPage(1);
+        }}
+      >
+        <option value="">Default</option>
+        <option value="priceLowToHigh">Price (Low to High)</option>
+        <option value="priceHighToLow">Price (High to Low)</option>
+        <option value="newestFirst">Newest</option>
+        <option value="featuredFirst">Featured</option>
+      </select>
+      <div>
+        <h4>Conditions:</h4>
+        {conditions.map((condition) => (
+          <label key={condition}>
+            <input
+              type="checkbox"
+              value={condition}
+              onChange={() => handleConditionChange(condition)}
+              checked={selectedConditions.includes(condition)}
+            />
+            {condition}
+          </label>
+        ))}
+      </div>
+
+      <div>
+        <h4>Brands:</h4>
+        {brands.map((brand) => (
+          <label key={brand}>
+            <input
+              type="checkbox"
+              value={brand}
+              onChange={() => handleBrandChange(brand)}
+              checked={selectedBrands.includes(brand)}
+            />
+            {brand}
+          </label>
+        ))}
+      </div>
       <div className="lodaing-container">
         {loading ? (
           <ImSpinner2 className="loading-icon-products" />
         ) : (
           <div className="product-list-contaoner">
             {products?.map((product) => (
-              <ul key={product._id}>
-                <li>
-                  <img src={product.images[0]} alt={product.name} />
-                </li>
-
-                <li>{product.name}</li>
-                <li>Price: ${product.price}</li>
-                <li>Featured: {product.featured ? "Yes" : "No"}</li>
-              </ul>
+              <Link to={`/product/${product._id}`} key={product._id}>
+                <ul>
+                  <li>
+                    <img src={product.images[0]} alt={product.name} />
+                  </li>
+                  <li>{product.name}</li>
+                  <li>Price: ${product.price}</li>
+                  <li>brand: {product.manufacturer.brand}</li>
+                  <li>condition: {product.condition}</li>
+                  <li>Featured: {product.featured ? "Yes" : "No"}</li>
+                </ul>
+              </Link>
             ))}
           </div>
         )}
@@ -157,7 +250,6 @@ function ProductList() {
       <div>
         <button
           onClick={() => {
-            updateUrl();
             setPage(page - 1);
           }}
           disabled={page === 1}
@@ -169,7 +261,6 @@ function ProductList() {
         </span>
         <button
           onClick={() => {
-            updateUrl();
             setPage(page + 1);
           }}
           disabled={page === totalPages}
