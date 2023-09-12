@@ -49,12 +49,16 @@ function ProductDetail() {
       ) : (
         <div>
           <div className="slide-container">
-            <div className="slide">
-              <img
-                src={product.images[currentImageIndex]}
-                alt={`${product.name}, image${currentImageIndex + 1}`}
-              />
-            </div>
+            {product.images && product.images.length > 0 ? (
+              <div className="slide">
+                <img
+                  src={product.images[currentImageIndex]}
+                  alt={`${product.name}, image${currentImageIndex + 1}`}
+                />
+              </div>
+            ) : (
+              <div>No images available</div>
+            )}
             <button className="slide-button prev" onClick={prevImage}>
               {"\u276E"}
             </button>

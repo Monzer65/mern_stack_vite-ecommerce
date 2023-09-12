@@ -67,6 +67,40 @@ module.exports = {
     }
   },
 
+  async addFromLocalStorageCartToDatabaseCart(req, res) {
+    try {
+      const userId = req.user.userId; // Extracted from JWT middleware
+      const { cartItems } = req.body;
+
+      // Find user's cart or create a new one if not exists
+      let cart = await Cart.findOne({ userId });
+
+      if (!cart) {
+        cart = new Cart({ userId });
+      }
+
+      // Loop through cart items from local storage and add them to the database cart
+      cartItems.forEach((item) => {
+        const { productId, quantity } = item;
+        const existingProductIndex = cart.products.findIndex(
+          (product) => product.productId.toString() === productId
+        );
+
+        if (existingProductIndex !== -1) {
+          cart.products[existingProductIndex].quantity += quantity;
+        } else {
+          cart.products.push({ productId, quantity });
+        }
+      });
+
+      await cart.save();
+      res.json(cart);
+    } catch (error) {
+      console.error("Error adding items from local storage to cart:", error);
+      res.status(500).send("Server error");
+    }
+  },
+
   async modifyQuantityInCart(req, res) {
     try {
       const userId = req.user.userId; // Extracted from JWT middleware

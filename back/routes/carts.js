@@ -19,6 +19,12 @@ router.post(
 );
 
 router.post(
+  "/addFromLocalStorageCart",
+  authMiddleware.verifyAndRevokeAccessToken,
+  cartController.addFromLocalStorageCartToDatabaseCart
+);
+
+router.post(
   "/updateQuantity",
   authMiddleware.verifyAndRevokeAccessToken,
   validationMiddleware.validateQuantityUpdate,

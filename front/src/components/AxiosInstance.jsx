@@ -26,6 +26,7 @@ axiosInstance.interceptors.request.use(
 );
 
 // Use another interceptor to handle token expiration and refresh
+// ...
 axiosInstance.interceptors.response.use(
   function (response) {
     return response;
@@ -38,6 +39,7 @@ axiosInstance.interceptors.response.use(
     if (statusCode === 401 && !originalRequest._retry) {
       // Set the retry flag to true
       originalRequest._retry = true;
+      // ...
       try {
         // Get the refresh token from the client-side cookies
         const refreshToken = document.cookie
@@ -58,22 +60,28 @@ axiosInstance.interceptors.response.use(
             refreshToken,
           }
         );
+
         // Get the new access token from the response
         const newAccessToken = response.data.accessToken;
+
         // Save the new access token to the local storage
         localStorage.setItem("accessToken", newAccessToken);
+
         // Set the Authorization header with the new access token
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
         // Return the original request with the new access token
         return axios(originalRequest);
-      } catch (error) {
-        // Handle refresh error
-        console.error(error);
-        return Promise.reject(error);
+      } catch (refreshError) {
+        console.error("Token refresh failed:", refreshError);
+        return Promise.reject(refreshError);
       }
     }
+    // Handle other errors
+    console.error("Request error:", error);
     return Promise.reject(error);
   }
 );
+// ...
 
 export default axiosInstance;

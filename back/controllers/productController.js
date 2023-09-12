@@ -89,7 +89,6 @@ module.exports = {
           $in: Array.isArray(brands) ? brands : [brands],
         };
       }
-
       if (search) {
         // Use $regex to perform a case-insensitive search
         filter.$or = [
@@ -119,7 +118,7 @@ module.exports = {
         .skip(skip)
         .limit(perPage);
 
-      res.json(products, count);
+      res.json({ products, count });
     } catch (err) {
       console.error(err);
       res.status(500).send("Server error");
@@ -222,7 +221,7 @@ module.exports = {
     // If category is provided, add an array condition to the filter object
     if (category) {
       // Get all the descendant categories of this category using your helper function
-      const descendantCategories = await getDescendantCategories(category);
+      const descendantCategories = await getDescendants(category);
 
       // Add them to your filter object using $in operator
       filter.category = { $in: descendantCategories };

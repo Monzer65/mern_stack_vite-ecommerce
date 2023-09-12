@@ -59,10 +59,13 @@ function ProductList() {
         },
       });
 
-      setProducts(data);
+      const productsArray = data.products;
+      setProducts(productsArray);
+
       const totalCount = data.count;
       const totalPagesCount = Math.ceil(totalCount / limit);
       setTotalPages(totalPagesCount);
+
       setLoading(false);
     } catch (err) {
       setLoading(false);

@@ -15,7 +15,7 @@ function SearchResult({ results, error }) {
           <div className="result" key={index}>
             <Link
               to={{
-                pathname: `/products/${result._id}`,
+                pathname: `/product/${result._id}`,
                 state: { result },
               }}
             >
