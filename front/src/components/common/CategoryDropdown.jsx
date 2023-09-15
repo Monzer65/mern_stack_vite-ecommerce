@@ -1,7 +1,7 @@
 /** @format */
 
 import PropTypes from "prop-types";
-import useAxios from "./UseAxios";
+import useAxios from "../../hooks/UseAxios";
 
 function CategoryDropdown({ onChange }) {
   const {
@@ -18,7 +18,7 @@ function CategoryDropdown({ onChange }) {
   return (
     <div>
       {loading && <div>Loading...</div>}
-      {error && <div>Error: {error}</div>}
+      {error && <div>{error}</div>}
       {data && (
         <div>
           <select onChange={onChange}>

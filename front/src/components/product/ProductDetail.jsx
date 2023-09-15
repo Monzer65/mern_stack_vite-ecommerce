@@ -69,6 +69,7 @@ function ProductDetail() {
           <h2>{product.name}</h2>
           <p>Price: ${product.price}</p>
           <p>{product.description}</p>
+          <button>Add to cart</button>
         </div>
       )}
     </div>

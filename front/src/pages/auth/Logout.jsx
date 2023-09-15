@@ -1,7 +1,7 @@
 /** @format */
 
 import { useEffect, useState } from "react";
-import axiosInstance from "./AxiosInstance";
+import axiosInstance from "../../utiles/AxiosInstance";
 
 const Logout = () => {
   const [message, setMessage] = useState("");

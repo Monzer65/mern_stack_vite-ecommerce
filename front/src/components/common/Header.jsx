@@ -3,8 +3,7 @@
 // Header.js
 import Logo from "./Logo";
 import SearchBox from "./SearchBox";
-import Navigation from "./Navigation";
-import DeliverTo from "./DeliverTo";
+import Navigation from "../nav/Navigation";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 // import { useState, useEffect } from "react";
@@ -14,7 +13,6 @@ function Header({ setResults, setError }) {
     <header className="header">
       <div className="logo-deliver-container">
         <Logo />
-        <DeliverTo />
       </div>
       <SearchBox setResults={setResults} setError={setError} />
       <Link to="/login">

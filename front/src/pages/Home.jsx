@@ -1,12 +1,12 @@
 /** @format */
 
-import Slide from "../components/Slide";
+import Slide from "../components/common/Slide";
 
 function Home() {
   return (
     <div>
       <Slide />
-      <h1>به صفحه اصلی خوش آمدید!</h1>
+      <h1>Home!</h1>
     </div>
   );
 }

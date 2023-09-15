@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "./AxiosInstance";
+import axiosInstance from "../../utiles/AxiosInstance";
 
 function PasswordUpdateForm() {
   const [oldPassword, setOldPassword] = useState("");

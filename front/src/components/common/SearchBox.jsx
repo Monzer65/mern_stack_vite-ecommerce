@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
-import SearchIcon from "../assets/search_icon.png";
+import SearchIcon from "../../assets/logos/search_icon.png";
 import CategoryDropdown from "./CategoryDropdown";
 
 function SearchBox({ setResults, setError }) {

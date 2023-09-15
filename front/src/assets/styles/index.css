@@ -114,12 +114,13 @@ option {
 }
 
 .header {
-  position: relative;
+  position: sticky;
   display: flex;
   justify-content: space-between;
-  gap: 2rem;
   align-items: center;
-  padding: 0.75rem 1rem;
+  gap: 2rem;
+  width: 100%;
+  padding-inline: 1rem;
   background-color: #0f1111;
   color: white;
 }
@@ -586,6 +587,64 @@ form label {
   display: block;
   max-width: 350px;
 }
+
+.product-cards-list {
+  display: flex;
+  flex: wrap;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.product-card {
+  display: grid;
+  align-items: flex-end;
+  justify-content: end;
+  max-width: 250px;
+  box-shadow: 0px 0px 5px 0px rgb(119, 99, 73);
+}
+
+.product-card img {
+  width: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.product-card .product-info-container {
+  padding-inline: 0.5rem;
+}
+.product-card button {
+  width: 100%;
+  border-radius: 0;
+  background-color: rgb(0, 191, 255);
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #3e8e41;
+  border: 2px solid #3e8e41;
+  border-radius: 25px;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.tick {
+  display: flex;
+  width: 25px;
+  height: 25px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #3e8e41;
+  border-radius: 100px;
+  background-color: white;
+  color: #3e8e41;
+  margin-left: 5px;
+  font-size: 18px;
+}
+
 @keyframes spin {
   from {
     transform: scale(1) rotate(0deg);

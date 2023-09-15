@@ -1,7 +1,7 @@
 /** @format */
 
 import { useState } from "react";
-import useAxios from "./UseAxios";
+import axios from "axios";
 
 const Slide = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -10,7 +10,7 @@ const Slide = () => {
     data: categories,
     loading,
     error,
-  } = useAxios("http://localhost:3000/api/categories/featured", {
+  } = axios("http://localhost:3000/api/categories/featured", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

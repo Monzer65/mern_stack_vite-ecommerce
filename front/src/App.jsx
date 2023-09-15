@@ -2,26 +2,33 @@
 
 import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Header from "./components/Header";
-import SearchResult from "./components/SearchResult";
 import PropTypes from "prop-types";
-import Home from "./components/Home";
-import Cart from "./components/Cart";
-import RegisterForm from "./components/Register";
-import Verification from "./components/Verification";
-import Login from "./components/Login";
-import Logout from "./components/Logout";
-import Profile from "./components/Profile";
 
-import NotFound from "./components/NotFound";
-import PhoneUpdateForm from "./components/UpdatePhone";
-import PasswordUpdateForm from "./components/updatePassword";
-import EmailUpdateForm from "./components/UpdateEmail";
-import PhoneVerificationForm from "./components/VerifyNewPhone";
-import EmailVerificationForm from "./components/VerifyNewEmail";
-import AddressUpdateForm from "./components/UpdateAddress";
-import ProductList from "./components/ProductList";
-import ProductDetail from "./components/ProductDetail";
+import Home from "./pages/Home";
+import Store from "./pages/product/Store";
+import Header from "./components/common/Header";
+import Footer from "./components/common/Footer";
+import SearchResult from "./pages/product/SearchResult";
+import ProductList from "./components/product/ProductList";
+import ProductDetail from "./components/product/ProductDetail";
+import Cart from "./pages/cart/Cart";
+import Success from "./pages/checkout/Success";
+import Cancel from "./pages/checkout/Cancel";
+
+import RegisterForm from "./pages/auth/Register";
+import Verification from "./pages/auth/Verification";
+import Login from "./pages/auth/Login";
+import Logout from "./pages/auth/Logout";
+
+import Profile from "./pages/profile/Profile";
+import PhoneUpdateForm from "./pages/profile/UpdatePhone";
+import EmailUpdateForm from "./pages/profile/UpdateEmail";
+import PhoneVerificationForm from "./pages/profile/VerifyNewPhone";
+import EmailVerificationForm from "./pages/profile/VerifyNewEmail";
+import PasswordUpdateForm from "./pages/profile/updatePassword";
+import AddressUpdateForm from "./pages/profile/UpdateAddress";
+
+import NotFound from "./pages/NotFound";
 
 function App() {
   const [results, setResults] = useState([]);
@@ -33,7 +40,10 @@ function App() {
       <Header setResults={setResults} setError={setError} />
       <Routes>
         {/* products related routes: */}
-        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+        <Route index element={<Store />} />
+        <Route path="success" element={<Success />} />
+        <Route path="cancel" element={<Cancel />} />
         <Route
           path="/search"
           element={<SearchResult results={results} error={error} />}
@@ -68,6 +78,7 @@ function App() {
         {/* page not found route: */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }

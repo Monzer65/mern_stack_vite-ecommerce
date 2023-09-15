@@ -1,7 +1,7 @@
 /** @format */
 
 import { useState } from "react";
-import axiosInstance from "./AxiosInstance";
+import axiosInstance from "../../utiles/AxiosInstance";
 import { useNavigate } from "react-router-dom";
 
 function PhoneVerificationForm() {

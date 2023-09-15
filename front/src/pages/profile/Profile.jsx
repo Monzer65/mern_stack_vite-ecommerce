@@ -1,6 +1,6 @@
 /** @format */
 
-import axiosInstance from "./AxiosInstance";
+import axiosInstance from "../../utiles/AxiosInstance";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";

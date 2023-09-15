@@ -1,14 +1,17 @@
 /** @format */
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import HamburgerMenu from "./HamburgerMenu";
+import { CartContext } from "../../contexts/CartContext";
 
 const Navigation = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+
+  const { cartItems } = useContext(CartContext);
 
   return (
     <nav className="navigation-container">
@@ -26,7 +29,7 @@ const Navigation = () => {
         </li>
         <li>
           <Link to="/cart" onClick={() => setMenuOpen(false)}>
-            Cart
+            Cart <span>{cartItems.length}</span>
           </Link>
         </li>
       </ul>
