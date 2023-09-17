@@ -27,7 +27,12 @@ connectToDatabase(mongodbURI)
 
 app.use(express.json());
 app.use(cookieParser()); // Use the cookie-parser middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 const productRouter = require("./routes/products");
 app.use("/api/products", waitForDatabaseConnection, productRouter);

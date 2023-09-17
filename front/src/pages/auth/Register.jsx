@@ -1,11 +1,12 @@
 /** @format */
 
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
+  const nameRef = useRef();
   // Initialize the state variables for the form fields
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
@@ -18,8 +19,13 @@ const RegisterForm = () => {
   const [passwordError, setPasswordError] = useState("");
   const [repeatPasswordError, setRepeatPasswordError] = useState("");
 
+  const [error, setError] = useState("");
+  const [showErrorLink, setShowErrorLink] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -57,37 +63,43 @@ const RegisterForm = () => {
 
         setLoading(false);
         setRegistrationSuccess(true);
-        window.location.href = `/verify?contact=${encodeURIComponent(contact)}`;
+        navigate(`/verify?contact=${encodeURIComponent(contact)}`);
       })
       .catch((error) => {
-        setLoading(false);
-        console.error(error.response.data.errors);
+        if (error.response && error.response.status === 409) {
+          // Handle the specific error condition here
+          setError("شما قبلا درخواست کد داده اید");
+          setShowErrorLink(true);
+        } else {
+          setLoading(false);
+          console.error(error.response.data);
 
-        // Set the errors for each field based on the error messages from the server
-        if (error.response.data.errors) {
-          // Loop through the errors array
-          for (let err of error.response.data.errors) {
-            // Check the path property of each error object
-            switch (err.path) {
-              case "name":
-                // Set the name error state variable
-                setNameError(err.msg);
-                break;
-              case "contact":
-                // Set the contact error state variable
-                setContactError(err.msg);
-                break;
-              case "password":
-                // Set the password error state variable
-                setPasswordError(err.msg);
-                break;
-              case "repeatPassword":
-                // Set the repeat password error state variable
-                setRepeatPasswordError(err.msg);
-                break;
-              default:
-                // Do nothing for other cases
-                break;
+          // Set the errors for each field based on the error messages from the server
+          if (error.response.data.errors) {
+            // Loop through the errors array
+            for (let err of error.response.data.errors) {
+              // Check the path property of each error object
+              switch (err.path) {
+                case "name":
+                  // Set the name error state variable
+                  setNameError(err.msg);
+                  break;
+                case "contact":
+                  // Set the contact error state variable
+                  setContactError(err.msg);
+                  break;
+                case "password":
+                  // Set the password error state variable
+                  setPasswordError(err.msg);
+                  break;
+                case "repeatPassword":
+                  // Set the repeat password error state variable
+                  setRepeatPasswordError(err.msg);
+                  break;
+                default:
+                  // Do nothing for other cases
+                  break;
+              }
             }
           }
         }
@@ -97,16 +109,22 @@ const RegisterForm = () => {
       });
   };
 
+  useEffect(() => {
+    nameRef.current.focus();
+  }, []);
+
   return (
     <div className="form-container">
       <h1 className="form-title">ثبت نام</h1>
-      <form onSubmit={handleSubmit} noValidate autoComplete="off">
+      <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="name">نام</label>
           <input
             type="text"
             id="name"
+            ref={nameRef}
             name="name"
+            autoComplete="off"
             value={name}
             onChange={handleNameChange}
             required
@@ -120,6 +138,7 @@ const RegisterForm = () => {
             type="text"
             id="contact"
             name="contact"
+            autoComplete="off"
             value={contact}
             onChange={handleContactChange}
             required
@@ -162,6 +181,19 @@ const RegisterForm = () => {
           {loading ? <FaSpinner className="loading-icon" /> : "ارسال"}
         </button>
       </form>
+      {error && (
+        <div>
+          <p className="error">{error}</p>
+          {showErrorLink && (
+            <p>
+              <Link to={`/verify?contact=${encodeURIComponent(contact)}`}>
+                اینجا
+              </Link>{" "}
+              کلیک کنید تا بتوانید کد را وارد کنید
+            </p>
+          )}
+        </div>
+      )}
       {registrationSuccess && !loading && (
         <p className="success-message">Registration successful!</p>
       )}

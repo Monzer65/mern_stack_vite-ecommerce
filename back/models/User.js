@@ -61,10 +61,10 @@ const userSchema = new mongoose.Schema({
     lastSent: Date,
   },
   cooldownUntil: Date,
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
+  roles: {
+    type: [String],
+    enum: ["admin", "user", "guest"],
+    default: ["user"],
   },
   postalCode: {
     type: String,

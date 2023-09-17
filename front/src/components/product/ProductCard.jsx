@@ -7,15 +7,14 @@ import { CartContext } from "../../contexts/CartContext";
 
 function ProductCard({ product }) {
   const { addToCart } = useContext(CartContext);
-  const [showNotification, setShowNotification] = useState(false); // State for notification
+  const [showNotification, setShowNotification] = useState(false);
 
   const handleAddToCart = () => {
     addToCart(product);
-    setShowNotification(true); // Show notification on successful add
-    // You can also hide the notification after a certain time if needed
+    setShowNotification(true);
     setTimeout(() => {
       setShowNotification(false);
-    }, 3000); // Hide notification after 3 seconds (adjust as needed)
+    }, 2500);
   };
 
   return (
@@ -46,7 +45,7 @@ function ProductCard({ product }) {
 ProductCard.propTypes = {
   product: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    price: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
     images: PropTypes.arrayOf(PropTypes.string).isRequired,
     _id: PropTypes.string.isRequired,
   }).isRequired,

@@ -1,10 +1,9 @@
 /** @format */
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import ProductCard from "../../components/product/ProductCard";
 import axios from "axios";
-
-import PropTypes from "prop-types";
 
 function Store() {
   const [products, setProducts] = useState([]);
@@ -26,6 +25,9 @@ function Store() {
   return (
     <>
       <h1>welcome to store page</h1>
+      <li>
+        <Link to="/admin">Admin panel</Link>
+      </li>
       <div className="product-cards-list">
         {products?.map?.((product) => (
           <ProductCard product={product} key={product._id} />
@@ -34,15 +36,5 @@ function Store() {
     </>
   );
 }
-
-Store.propTypes = {
-  products: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      images: PropTypes.arrayOf(PropTypes.string).isRequired,
-      _id: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-};
 
 export default Store;

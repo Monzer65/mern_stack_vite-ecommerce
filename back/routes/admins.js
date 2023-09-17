@@ -27,6 +27,13 @@ router.get(
 );
 
 router.get(
+  "/users",
+  authMiddleware.verifyAndRevokeAccessToken,
+  checkAdminRole,
+  adminController.getUsers
+);
+
+router.get(
   "/recent-orders",
   authMiddleware.verifyAndRevokeAccessToken,
   checkAdminRole,

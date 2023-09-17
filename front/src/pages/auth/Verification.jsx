@@ -2,10 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FaSpinner, FaCheckCircle } from "react-icons/fa";
+import Axios from "../../api/Axios";
+import useAuth from "../../hooks/UseAuth";
 
 const VerificationForm = () => {
+  const { setAuth } = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
+  const queryParams = new URLSearchParams(location.search);
+  const contactFromParam = queryParams.get("contact");
+
   const [contact, setContact] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [verifyLoading, setVerifyLoading] = useState(false);
@@ -13,12 +23,7 @@ const VerificationForm = () => {
   const [verifyError, setVerifyError] = useState(null);
   const [resendError, setResendError] = useState(null);
 
-  const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
-
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const contactFromParam = queryParams.get("contact");
 
   useEffect(() => {
     if (contactFromParam) {
@@ -38,36 +43,40 @@ const VerificationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setVerifyLoading(true);
     setVerifyError(null);
     setSuccessMessage("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/verify",
+      const response = await Axios.post(
+        "/auth/verify",
+        JSON.stringify({ contact, verificationCode }),
         {
-          contact,
-          verificationCode,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
         }
       );
-      console.log(response.data);
-      setVerifyLoading(false);
-      if (response.status === 200) {
-        // Store the accrefreshess token in cookie
-        // document.cookie = `refreshToken=${
-        //   response.data.refreshToken
-        // }; HttpOnly; SameSite=Strict; Max-Age=${7 * 24 * 60 * 60};`;
-        // Store the access token in local storage
-        localStorage.setItem("accessToken", response.data.accessToken);
+      console.log(JSON.stringify(response.data));
+      const user = response?.data;
+      const accessToken = response?.data?.accessToken;
+      const roles = response?.data?.roles;
+      setAuth({ user, roles, accessToken });
+      setAuth((prevAuth) => ({
+        ...prevAuth,
+        accessToken,
+      }));
 
-        setSuccessMessage(response.data.message);
-        setVerifyLoading(true);
-        setResendLoading(true);
-        setTimeout(() => {
-          setSuccessMessage("");
-          navigate("/");
-        }, 3000);
-      }
+      setVerifyLoading(false);
+      setContact("");
+      setVerificationCode("");
+      setSuccessMessage(response.data.message);
+      setTimeout(() => {
+        setSuccessMessage("");
+        navigate(from, { replace: true });
+      }, 3000);
     } catch (error) {
       console.error(error.response.data.errors);
       setVerifyLoading(false);
@@ -82,11 +91,14 @@ const VerificationForm = () => {
     setSuccessMessage("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/resend",
+      const response = await Axios.post(
+        "/auth/resend",
+        JSON.stringify({ contact, verificationCode }),
         {
-          contact,
-          verificationCode,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // withCredentials: true,
         }
       );
       console.log(response.data);

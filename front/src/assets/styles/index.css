@@ -39,6 +39,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  min-height: 100vh;
 }
 
 a {
@@ -200,7 +201,10 @@ option {
 .search-component button img {
   display: none;
 }
-
+.error {
+  color: red;
+  text-align: center;
+}
 .search-component .error {
   direction: rtl;
   position: absolute;
@@ -292,11 +296,6 @@ form label {
 }
 
 .success-message {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -309,7 +308,6 @@ form label {
 .success-icon {
   color: green;
   font-size: 36px;
-  margin-bottom: 10px;
 }
 
 .success {

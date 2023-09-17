@@ -28,6 +28,17 @@ const Navigation = () => {
           </Link>
         </li>
         <li>
+          <Link
+            to={{
+              pathname: "/profile",
+              state: { from: location.pathname },
+            }}
+            onClick={() => setMenuOpen(false)}
+          >
+            Profile
+          </Link>
+        </li>
+        <li>
           <Link to="/cart" onClick={() => setMenuOpen(false)}>
             Cart <span>{cartItems.length}</span>
           </Link>

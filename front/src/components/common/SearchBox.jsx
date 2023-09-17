@@ -3,11 +3,10 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import PropTypes from "prop-types";
 import SearchIcon from "../../assets/logos/search_icon.png";
 import CategoryDropdown from "./CategoryDropdown";
 
-function SearchBox({ setResults, setError }) {
+function SearchBox() {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [inputError, setInputError] = useState("");
@@ -42,16 +41,11 @@ function SearchBox({ setResults, setError }) {
     axios
       .get(apiUrl)
       .then((response) => {
-        setResults(
-          Array.isArray(response.data) ? response.data : [response.data]
-        );
-        setError("");
         console.log(response.data);
         navigate("/search");
       })
       .catch((error) => {
         console.error(error);
-        setError("Something went wrong. Please try again later.");
       });
   }
 
@@ -77,14 +71,5 @@ function SearchBox({ setResults, setError }) {
     </div>
   );
 }
-
-SearchBox.propTypes = {
-  setResults: PropTypes.func.isRequired,
-  setError: PropTypes.func.isRequired,
-};
-
-SearchBox.defaultProps = {
-  setResults: () => {},
-};
 
 export default SearchBox;

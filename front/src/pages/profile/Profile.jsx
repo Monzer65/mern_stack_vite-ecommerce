@@ -1,11 +1,17 @@
 /** @format */
 
-import axiosInstance from "../../utiles/AxiosInstance";
+import useAxiosPrivate from "../../hooks/UseAxiosPrivate";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+
 import { Link } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 
 const UserProfile = () => {
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [profile, setProfile] = useState("");
@@ -13,27 +19,39 @@ const UserProfile = () => {
   const [editName, setEditName] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+
     const fetchUserProfile = async () => {
       try {
-        const response = await axiosInstance.get("/profile");
+        const response = await axiosPrivate.get("/profile", {
+          signal: controller.signal,
+        });
+        console.log(response.data);
         const user = response.data.profile;
-        setName(user.name);
-        setProfile(user);
-        setLoading(false);
-      } catch (error) {
+        isMounted && setName(user.name);
+        isMounted && setProfile(user);
+        isMounted && setLoading(false);
+      } catch (err) {
+        console.error(err);
         setError(error.user);
         setLoading(false);
+        navigate("/login", { state: { from: location }, replace: true });
       }
     };
 
     fetchUserProfile();
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, []);
 
   const updateName = async (newValue) => {
     setLoading(true);
 
     try {
-      await axiosInstance.put("/profile/update-name", {
+      await axiosPrivate.put("/profile/update-name", {
         name: newValue,
       });
       toggleEditMode(false);
@@ -104,6 +122,9 @@ const UserProfile = () => {
           <Link to={"/profile/update-address"}>edit</Link>
         </div>
       </div>
+      <button>
+        <Link to={"/logout"}>خروج</Link>
+      </button>
     </div>
   );
 };

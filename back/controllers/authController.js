@@ -97,7 +97,7 @@ module.exports = {
       });
 
       if (existingUser && existingUser.isVerified) {
-        return res.status(400).json({ error: "کاربر موجود است" });
+        return res.status(400).json({ error: "کاربر قبلا ثبت نام کرده است" });
       }
 
       if (
@@ -105,8 +105,8 @@ module.exports = {
         !existingUser.isVerified &&
         existingUser.verificationCodeExpiration > Date.now()
       ) {
-        return res.status(400).json({
-          error: "شما قبلا درخواست داده اید و در مرحله تایید می باشید...",
+        return res.status(409).json({
+          error: "شما قبلا درخواست کد داده اید",
         });
       }
 
@@ -186,9 +186,12 @@ module.exports = {
             maxAge: 7 * 24 * 60 * 60 * 1000,
           });
 
+          console.log("verifyRoles:", user.roles);
+
           res.status(200).json({
             message: "تایید موفق",
             accessToken: tokens.accessToken,
+            roles: user.roles,
           });
         }
       } else {
@@ -281,6 +284,7 @@ module.exports = {
       res.json({
         message: "ورود موفق",
         accessToken: tokens.accessToken,
+        roles: user.roles,
       });
     } catch (err) {
       console.error("Error during login:", err);
@@ -326,7 +330,7 @@ module.exports = {
   async refreshToken(req, res) {
     const { refreshToken } = req.cookies;
     if (!refreshToken) {
-      return res.status(401).send("توکن رفرش یافت نشد");
+      return res.status(403).send("توکن رفرش یافت نشد");
     }
     try {
       const payload = jwt.verify(refreshToken, refreshSecretKey);
@@ -336,7 +340,7 @@ module.exports = {
         return res.status(401).send("کاربر یافت نشد");
       }
       if (user.refreshTokenVersion !== payload.version) {
-        return res.status(401).send("توکن رفرش نامعتبر است");
+        return res.status(403).send("توکن رفرش نامعتبر است");
       }
 
       const accessToken = req.headers.authorization.split(" ")[1];

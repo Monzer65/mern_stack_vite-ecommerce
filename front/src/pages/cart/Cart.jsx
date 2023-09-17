@@ -29,19 +29,19 @@ export default function Cart() {
                   <button
                     className="cart-btn"
                     onClick={() => {
-                      removeFromCart(item);
+                      addToCart(item);
                     }}
                   >
-                    -
+                    +
                   </button>
                   <p className="item-quantity">{item.quantity}</p>
                   <button
                     className="cart-btn"
                     onClick={() => {
-                      addToCart(item);
+                      removeFromCart(item);
                     }}
                   >
-                    +
+                    -
                   </button>
                 </div>
               </div>

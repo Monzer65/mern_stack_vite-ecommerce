@@ -6,10 +6,11 @@ const refreshSecretKey = process.env.JWT_REFRESHSECRET;
 
 async function generateTokens(user) {
   const accessToken = jwt.sign(
-    { userId: user._id, userName: user.name, role: user.role },
+    { userId: user._id, userName: user.name, roles: user.roles },
     secretKey,
     { expiresIn: "1h" }
   );
+  console.log("GjwtRoles:", user.roles);
 
   const version = user.refreshTokenVersion + 1;
 

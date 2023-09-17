@@ -1,25 +1,19 @@
 /** @format */
 
 import { useEffect, useState } from "react";
-import axiosInstance from "../../utiles/AxiosInstance";
+import useAxiosPrivate from "../../hooks/UseAxiosPrivate";
 
 const Logout = () => {
+  const axiosPrivate = useAxiosPrivate();
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Create a function to handle the logout process
     const handleLogout = async () => {
       try {
-        // Send a logout request to your server
-        const response = await axiosInstance.post("/auth/logout");
-
+        const response = await axiosPrivate.post("/auth/logout");
         if (response.status === 200) {
-          // Clear the local storage or cookies as needed
-          localStorage.removeItem("accessToken");
-          // Redirect or display a message
           setMessage(response.data.message);
-          window.location.href = `/`;
         } else {
           setError("Logout failed");
         }
@@ -29,7 +23,6 @@ const Logout = () => {
       }
     };
 
-    // Call the handleLogout function
     handleLogout();
   }, []);
 
