@@ -1,6 +1,6 @@
 /** @format */
 
-import logo from "../../assets/logos/mainLogo.png";
+import logo from "../assets/logos/mainLogo.png";
 import { Link } from "react-router-dom";
 
 const Logo = () => {

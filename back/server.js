@@ -11,6 +11,7 @@ const {
   waitForDatabaseConnection,
 } = require("./controllers/databaseController");
 const path = require("path");
+const corsOptions = require("./config/corsOptions");
 const cors = require("cors");
 // Register the middleware to be used for all routes
 //or: app.all("/api/*", waitForDatabaseConnection) to apply  the middleware only to the routes that start with /api/

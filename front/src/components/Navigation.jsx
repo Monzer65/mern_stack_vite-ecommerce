@@ -3,7 +3,7 @@
 import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import HamburgerMenu from "./HamburgerMenu";
-import { CartContext } from "../../contexts/CartContext";
+import { CartContext } from "../contexts/CartContext";
 
 const Navigation = () => {
   const [menuOpen, setMenuOpen] = useState(false);

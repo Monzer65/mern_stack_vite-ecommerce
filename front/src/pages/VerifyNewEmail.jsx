@@ -1,16 +1,18 @@
 /** @format */
 
 import { useState } from "react";
-import axiosInstance from "../../utiles/AxiosInstance";
+import useAxiosPrivate from "../hooks/UseAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 
 function EmailVerificationForm() {
+  const axiosPrivate = useAxiosPrivate();
+
   const [verificationCode, setVerificationCode] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const handleVerification = async () => {
     try {
-      const response = await axiosInstance.post(
+      const response = await axiosPrivate.post(
         "/profile/update-email/verify-email",
         {
           verificationCode,

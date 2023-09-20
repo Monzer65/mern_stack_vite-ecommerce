@@ -1,8 +1,8 @@
 /** @format */
 
 import { useContext } from "react";
-import { CartContext } from "../../contexts/CartContext";
-import "../../assets/styles/cart.css";
+import { CartContext } from "../contexts/CartContext";
+import "../assets/styles/cart.css";
 
 export default function Cart() {
   const { cartItems, addToCart, removeFromCart, clearCart, getCartTotal } =

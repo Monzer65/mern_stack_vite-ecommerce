@@ -1,13 +1,13 @@
 /** @format */
 
 import { useRef, useState, useEffect } from "react";
-import useAuth from "../../hooks/UseAuth";
-import Axios from "../../api/Axios";
+import useAuth from "../hooks/UseAuth";
+import axios from "../api/Axios";
 import { FaSpinner } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Login = () => {
-  const { setAuth } = useAuth();
+  const { setAuth, persist, setPersist } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,7 +39,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await Axios.post(
+      const response = await axios.post(
         "/auth/login",
         JSON.stringify({ contact, password }),
         {
@@ -49,21 +49,12 @@ const Login = () => {
           withCredentials: true,
         }
       );
-      const user = response?.data;
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
+      const userName = response?.data?.userName;
 
-      console.log("Redirecting to:", from);
-      console.log("roles:", roles);
-      console.log("accesstoken:", accessToken);
+      setAuth({ contact, password, roles, accessToken, userName });
 
-      console.log("user:", user);
-
-      setAuth({ user, roles, accessToken });
-      setAuth((prevAuth) => ({
-        ...prevAuth,
-        accessToken,
-      }));
       setContact("");
       setPassword("");
       setLoading(false);
@@ -99,6 +90,15 @@ const Login = () => {
   useEffect(() => {
     nameRef.current.focus();
   }, []);
+
+  const togglePersist = () => {
+    setPersist((prev) => !prev);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("persist", persist);
+  }, [persist]);
+
   return (
     <>
       <div className="form-container">
@@ -140,6 +140,15 @@ const Login = () => {
           >
             {loading ? <FaSpinner className="loading-icon" /> : "ورود"}
           </button>
+          <div className="persistCheck">
+            <input
+              type="checkbox"
+              id="persist"
+              onChange={togglePersist}
+              checked={persist}
+            />
+            <label htmlFor="persist">Trust This Device</label>
+          </div>
         </form>
         <p>
           ثبت نام نکرده اید؟

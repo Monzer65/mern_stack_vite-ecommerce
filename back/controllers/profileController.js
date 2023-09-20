@@ -142,7 +142,7 @@ module.exports = {
   async getUserProfile(req, res) {
     try {
       const userId = req.user.userId;
-      const role = req.user.role;
+      const roles = req.user.roles;
 
       const profile = await User.findById(userId);
       if (!profile) {
@@ -150,7 +150,7 @@ module.exports = {
       }
 
       let selectedFields = {};
-      if (role === "admin") {
+      if (roles === "admin") {
         // Include all fields for admin
         selectedFields = profile.toObject(); // Convert the document to a plain object
       } else {
@@ -168,7 +168,7 @@ module.exports = {
       // Construct the response JSON object
       const responseObject = {
         profile: selectedFields,
-        role,
+        roles,
       };
       // Send the response
       res.json(responseObject);

@@ -1,6 +1,6 @@
 /** @format */
 
-import Slide from "../components/common/Slide";
+import Slide from "../components/Slide";
 
 function Home() {
   return (

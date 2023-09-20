@@ -1,7 +1,7 @@
 /** @format */
 
 // Import React and CSS modules
-import "../../assets/styles/footer.css";
+import "../assets/styles/footer.css";
 
 // Define the Footer component
 function Footer() {

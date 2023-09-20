@@ -1,13 +1,15 @@
 /** @format */
 
-import useAxiosPrivate from "../../hooks/UseAxiosPrivate";
+import useAxiosPrivate from "../hooks/UseAxiosPrivate";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import useLogout from "../hooks/UseLogout";
 
 import { Link } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 
 const UserProfile = () => {
+  const logout = useLogout();
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,25 +20,29 @@ const UserProfile = () => {
   const [name, setName] = useState("");
   const [editName, setEditName] = useState(false);
 
+  const signOut = async () => {
+    await logout();
+    navigate("/");
+  };
+
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
-
     const fetchUserProfile = async () => {
       try {
         const response = await axiosPrivate.get("/profile", {
           signal: controller.signal,
         });
-        console.log(response.data);
-        const user = response.data.profile;
-        isMounted && setName(user.name);
-        isMounted && setProfile(user);
-        isMounted && setLoading(false);
+        console.log(response.data.profile);
+
+        isMounted && setName(response.data.profile.name);
+        isMounted && setProfile(response.data.profile);
       } catch (err) {
-        console.error(err);
-        setError(error.user);
-        setLoading(false);
+        console.error("profile error:", err);
+        setError(error.response.data.error);
         navigate("/login", { state: { from: location }, replace: true });
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -122,9 +128,7 @@ const UserProfile = () => {
           <Link to={"/profile/update-address"}>edit</Link>
         </div>
       </div>
-      <button>
-        <Link to={"/logout"}>خروج</Link>
-      </button>
+      <button onClick={signOut}>خروج</button>
     </div>
   );
 };

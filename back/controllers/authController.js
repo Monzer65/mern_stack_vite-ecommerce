@@ -275,16 +275,18 @@ module.exports = {
 
       const tokens = await generateTokens(user);
       res.cookie("refreshToken", tokens.refreshToken, {
+        domain: "localhost",
         httpOnly: true,
-        // secure: true, // Use HTTPS
         sameSite: "strict", // Protect against CSRF
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
 
       res.json({
         message: "ورود موفق",
         accessToken: tokens.accessToken,
         roles: user.roles,
+        userId: user._id,
+        userName: user.name,
       });
     } catch (err) {
       console.error("Error during login:", err);
@@ -300,14 +302,12 @@ module.exports = {
         return res.status(404).send("کاربر پیدا نشد");
       }
 
-      const accessToken = req.headers["authorization"].split(" ")[1];
-      if (!accessToken) {
-        return res.status(401).json({ error: "توکن یافت نشد" });
-      }
+      const oldAccessToken = req.headers.authorization.split(" ")[1];
 
-      // Store the revoked access token in the database
-      const revokedToken = new RevokedToken({ token: accessToken });
-      await revokedToken.save();
+      if (oldAccessToken) {
+        // Create a new RevokedToken document for the old access token
+        await RevokedToken.create({ token: oldAccessToken, user: user._id });
+      }
 
       await User.updateOne(
         { _id: userId },
@@ -317,7 +317,13 @@ module.exports = {
         }
       );
 
-      res.clearCookie("refreshToken");
+      const cookies = req.cookies;
+      const refreshToken = cookies.refreshToken;
+
+      res.clearCookie("refreshToken", refreshToken, {
+        domain: "localhost",
+      });
+
       res.json({
         message: "خروج موفق",
       });
@@ -328,38 +334,51 @@ module.exports = {
   },
 
   async refreshToken(req, res) {
-    const { refreshToken } = req.cookies;
+    const cookies = req.cookies;
+
+    const refreshToken = cookies.refreshToken;
+
     if (!refreshToken) {
-      return res.status(403).send("توکن رفرش یافت نشد");
+      return res.status(403).json("توکن رفرش یافت نشد");
     }
+
     try {
       const payload = jwt.verify(refreshToken, refreshSecretKey);
       // Find the user associated with the refresh token
       const user = await User.findById(payload.userId);
+
       if (!user) {
-        return res.status(401).send("کاربر یافت نشد");
-      }
-      if (user.refreshTokenVersion !== payload.version) {
-        return res.status(403).send("توکن رفرش نامعتبر است");
+        return res.status(401).json("کاربر یافت نشد");
       }
 
-      const accessToken = req.headers.authorization.split(" ")[1];
-      if (accessToken) {
-        // Create a new RevokedToken document for the current access token
-        await RevokedToken.create({ token: accessToken, user: user._id });
+      if (user.refreshTokenVersion !== payload.version) {
+        return res.status(403).json("توکن رفرش نامعتبر است");
+      }
+
+      const oldAccessToken = req.headers.authorization.split(" ")[1];
+
+      if (oldAccessToken) {
+        // Create a new RevokedToken document for the old access token
+        await RevokedToken.create({ token: oldAccessToken, user: user._id });
       }
 
       const tokens = await generateTokens(user);
+
       res.cookie("refreshToken", tokens.refreshToken, {
+        domain: "localhost",
         httpOnly: true,
         sameSite: "strict",
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        maxAge: 24 * 60 * 60 * 1000, // 1 days
       });
+
       // Return the new access token
-      res.json({ accessToken: tokens.accessToken });
+      res.json({
+        accessToken: tokens.accessToken,
+        roles: user.roles,
+        userName: user.name,
+      });
     } catch (err) {
-      console.error("Error during token refresh:", err);
-      res.status(500).send("Server error");
+      res.status(500).json("Server error brooo");
     }
   },
 };

@@ -3,7 +3,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import SearchIcon from "../../assets/logos/search_icon.png";
+import SearchIcon from "../assets/logos/search_icon.png";
 import CategoryDropdown from "./CategoryDropdown";
 
 function SearchBox() {

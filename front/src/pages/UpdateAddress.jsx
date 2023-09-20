@@ -1,7 +1,7 @@
 /** @format */
 
 import { useState } from "react";
-import axiosInstance from "../../utiles/AxiosInstance";
+import axiosInstance from "../components/AxiosInstance";
 import { useNavigate } from "react-router-dom";
 
 function AddressUpdateForm() {

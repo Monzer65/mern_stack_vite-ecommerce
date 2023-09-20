@@ -1,7 +1,7 @@
 /** @format */
 
 import PropTypes from "prop-types";
-import useAxios from "../../hooks/UseAxios";
+import useAxios from "../hooks/UseAxios";
 
 function CategoryDropdown({ onChange }) {
   const {

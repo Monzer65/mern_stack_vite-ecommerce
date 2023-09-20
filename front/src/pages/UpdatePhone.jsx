@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../utiles/AxiosInstance";
+import axiosInstance from "../components/AxiosInstance";
 
-function EmailUpdateForm() {
-  const [newEmail, setNewEmail] = useState("");
+function PhoneUpdateForm() {
+  const [newPhone, setNewPhone] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -14,12 +14,12 @@ function EmailUpdateForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.put("/profile/update-email", {
-        newEmail,
+      const response = await axiosInstance.put("/profile/update-phone", {
+        newPhone,
       });
       console.log(response);
       setSuccess(response.data.message);
-      navigate("/profile/update-email/verify-new-email");
+      navigate("/profile/update-phone/verify-new-phone");
     } catch (error) {
       setError(error.response.data.errors || error.response.data);
     }
@@ -27,15 +27,15 @@ function EmailUpdateForm() {
 
   return (
     <div className="form-container">
-      <h1 className="form-title">Update Email</h1>
+      <h1 className="form-title">Update Phone</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="confirm-password">your new email</label>
+          <label htmlFor="update-phone">your new phone</label>
           <input
-            type="email"
-            id="confirm-password"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
+            type="text"
+            id="update-phone"
+            value={newPhone}
+            onChange={(e) => setNewPhone(e.target.value)}
             required
           />
         </div>
@@ -47,4 +47,4 @@ function EmailUpdateForm() {
   );
 }
 
-export default EmailUpdateForm;
+export default PhoneUpdateForm;

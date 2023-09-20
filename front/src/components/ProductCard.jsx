@@ -3,7 +3,7 @@
 import { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { CartContext } from "../../contexts/CartContext";
+import { CartContext } from "../contexts/CartContext";
 
 function ProductCard({ product }) {
   const { addToCart } = useContext(CartContext);

@@ -11,7 +11,7 @@ module.exports = {
   async getDashboard(req, res) {
     try {
       const userId = req.user.userId;
-      const role = req.user.role;
+      const roles = req.user.roles;
       const user = await User.findById(userId);
 
       if (!user) {
@@ -44,17 +44,18 @@ module.exports = {
       res.status(500).send("Server error");
     }
   },
+
   async getUsers(req, res) {
     try {
       const userId = req.user.userId;
-      const role = req.user.role;
+      const roles = req.user.roles;
       const user = await User.findById(userId);
 
       if (!user) {
         return res.status(404).send("User not found");
       }
 
-      if (role === "admin") {
+      if (roles === "admin") {
         const users = await User.find().populate({
           path: "carts products categories reviews orders",
           populate: {

@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaSpinner, FaCheckCircle } from "react-icons/fa";
-import Axios from "../../api/Axios";
-import useAuth from "../../hooks/UseAuth";
+import Axios from "../api/Axios";
+import useAuth from "../hooks/UseAuth";
 
 const VerificationForm = () => {
   const { setAuth } = useAuth();

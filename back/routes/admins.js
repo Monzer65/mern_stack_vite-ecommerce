@@ -12,7 +12,7 @@ const orderController = require("../controllers/orderController");
 const checkAdminRole = (req, res, next) => {
   const user = req.user;
 
-  if (user.role !== "admin") {
+  if (user.roles !== "admin") {
     return res.status(403).json({ message: "Access denied" });
   }
 
