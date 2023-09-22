@@ -251,6 +251,11 @@ option {
   position: relative;
   width: 250px;
 }
+.persist-form-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 form label {
   direction: rtl;
@@ -269,6 +274,10 @@ form label {
   border-radius: 8px;
   z-index: 1;
 }
+.persist-form-group label {
+  position: unset;
+  transform: translateY(0);
+}
 
 .form-group input {
   width: 100%;
@@ -282,6 +291,10 @@ form label {
   border-bottom: 2px solid #000;
   transition: 0.1s;
   border-bottom-left-radius: 8px;
+}
+
+.persist-form-group input {
+  width: auto;
 }
 
 .form-group input:focus,
@@ -378,13 +391,9 @@ form label {
 }
 
 .hamburger-menu {
-  position: absolute;
   display: none;
   font-size: 24px;
-  top: 54px;
-  right: 1rem;
   cursor: pointer;
-  z-index: 1000;
 }
 
 .hamburger-menu .bar {
@@ -594,11 +603,27 @@ form label {
 }
 
 .product-card {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   align-items: flex-end;
   justify-content: end;
   max-width: 250px;
   box-shadow: 0px 0px 5px 0px rgb(119, 99, 73);
+}
+
+.product-card a {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  height: 100%;
+  color: unset;
+  outline: none;
+}
+.product-card a:hover {
+  color: unset;
+  -webkit-box-shadow: inset 0px 0px 0px 1px rgb(119, 99, 73);
+  -moz-box-shadow: inset 0px 0px 0px 1px rgb(119, 99, 73);
+  box-shadow: inset 0px 0px 0px 1px rgb(119, 99, 73);
 }
 
 .product-card img {
@@ -687,10 +712,11 @@ form label {
   }
 
   .hamburger-menu {
+    position: relative;
     display: block;
     cursor: pointer;
     font-size: 24px;
-    margin-right: 1rem;
+    z-index: 1000;
   }
 
   .hamburger-menu.open .bar {

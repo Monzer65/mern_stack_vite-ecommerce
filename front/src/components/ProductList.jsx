@@ -1,9 +1,10 @@
 /** @format */
 
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ImSpinner2 } from "react-icons/im";
+import ProductCard from "./ProductCard";
 
 function ProductList() {
   const location = useLocation();
@@ -232,20 +233,9 @@ function ProductList() {
         {loading ? (
           <ImSpinner2 className="loading-icon-products" />
         ) : (
-          <div className="product-list-contaoner">
-            {products?.map((product) => (
-              <Link to={`/product/${product._id}`} key={product._id}>
-                <ul>
-                  <li>
-                    <img src={product.images[0]} alt={product.name} />
-                  </li>
-                  <li>{product.name}</li>
-                  <li>Price: ${product.price}</li>
-                  <li>brand: {product.manufacturer.brand}</li>
-                  <li>condition: {product.condition}</li>
-                  <li>Featured: {product.featured ? "Yes" : "No"}</li>
-                </ul>
-              </Link>
+          <div className="product-cards-list">
+            {products?.map?.((product) => (
+              <ProductCard product={product} key={product._id} />
             ))}
           </div>
         )}

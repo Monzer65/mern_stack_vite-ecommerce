@@ -1,22 +1,18 @@
 /** @format */
-// server.js
-require("dotenv").config();
 const express = require("express");
-const cookieParser = require("cookie-parser"); // Import the cookie-parser middleware
 const app = express();
+const cookieParser = require("cookie-parser");
+require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 const mongodbURI = require("./config/databaseUriConfig");
 const {
   connectToDatabase,
   waitForDatabaseConnection,
 } = require("./controllers/databaseController");
-const path = require("path");
-const corsOptions = require("./config/corsOptions");
 const cors = require("cors");
-// Register the middleware to be used for all routes
-//or: app.all("/api/*", waitForDatabaseConnection) to apply  the middleware only to the routes that start with /api/
+const corsOptions = require("./config/corsOptions");
+const path = require("path");
 
-// Connect to MongoDB and start the server
 connectToDatabase(mongodbURI)
   .then(() => {
     app.listen(PORT, () => {
@@ -27,7 +23,7 @@ connectToDatabase(mongodbURI)
   .catch((err) => console.error("Error connecting to MongoDB Atlas:", err));
 
 app.use(express.json());
-app.use(cookieParser()); // Use the cookie-parser middleware
+app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",

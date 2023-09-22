@@ -4,9 +4,16 @@ const User = require("../models/User");
 const Category = require("../models/Category");
 
 module.exports = {
+  // Assuming you have the parent-child relationships set correctly in your schema
   async getCategories(req, res) {
     try {
-      const categories = await Category.find();
+      let categories;
+
+      if (req.query.nested === "true") {
+        categories = await Category.find().populate("parent");
+      } else {
+        categories = await Category.find();
+      }
 
       return res.send(categories);
     } catch (error) {

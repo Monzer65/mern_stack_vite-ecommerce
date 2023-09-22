@@ -1,29 +1,22 @@
 /** @format */
 
-import useAxiosPrivate from "../hooks/UseAxiosPrivate";
-import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import useAxiosPrivate from "../hooks/UseAxiosPrivate";
 import useLogout from "../hooks/UseLogout";
-
 import { Link } from "react-router-dom";
-import { FaSpinner } from "react-icons/fa";
+import { useUserContext } from "../contexts/UserNameContext";
 
 const UserProfile = () => {
-  const logout = useLogout();
   const axiosPrivate = useAxiosPrivate();
-  const navigate = useNavigate();
   const location = useLocation();
+  const logout = useLogout();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [profile, setProfile] = useState("");
-  const [name, setName] = useState("");
-  const [editName, setEditName] = useState(false);
-
-  const signOut = async () => {
-    await logout();
-    navigate("/");
-  };
+  const { setUserProfile } = useUserContext();
 
   useEffect(() => {
     let isMounted = true;
@@ -33,10 +26,9 @@ const UserProfile = () => {
         const response = await axiosPrivate.get("/profile", {
           signal: controller.signal,
         });
-        console.log(response.data.profile);
 
-        isMounted && setName(response.data.profile.name);
         isMounted && setProfile(response.data.profile);
+        setUserProfile(response.data.profile.name);
       } catch (err) {
         console.error("profile error:", err);
         setError(error.response.data.error);
@@ -53,24 +45,11 @@ const UserProfile = () => {
     };
   }, []);
 
-  const updateName = async (newValue) => {
-    setLoading(true);
-
-    try {
-      await axiosPrivate.put("/profile/update-name", {
-        name: newValue,
-      });
-      toggleEditMode(false);
-      setName(newValue);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error("Error updating name:", error);
-    }
-  };
-
-  const toggleEditMode = (editMode) => {
-    setEditName(editMode);
+  const signOut = async () => {
+    await logout();
+    localStorage.removeItem("userName");
+    setUserProfile("");
+    navigate("/");
   };
 
   return (
@@ -79,28 +58,10 @@ const UserProfile = () => {
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       <div>
-        {editName ? (
-          <div>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <button disabled={loading} onClick={() => updateName(name)}>
-              {loading ? <FaSpinner className="loading-icon" /> : "update"}
-            </button>
-          </div>
-        ) : (
-          <div>
-            <p>Name: {name}</p>
-            <button
-              disabled={loading}
-              onClick={() => toggleEditMode("name", true)}
-            >
-              {loading ? <FaSpinner className="loading-icon" /> : "edit"}
-            </button>
-          </div>
-        )}
+        <div>
+          <p>Name: {profile.name}</p>
+          <Link to={"/profile/update-name"}>edit</Link>
+        </div>
         <div>
           <p>Email: {profile.email}</p>
           <Link to={"/profile/update-email"}>edit</Link>

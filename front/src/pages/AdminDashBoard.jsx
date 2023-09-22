@@ -1,15 +1,12 @@
 /** @format */
-import Users from "../components/Users";
-import useRefreshToken from "../hooks/UseRefreshToken";
-function Dashboard() {
-  const refresh = useRefreshToken();
+// import Users from "../components/Users";
+function AdminDashboard() {
   return (
     <>
       <h1>Admin page</h1>
-      <Users />
-      <button onClick={() => refresh()}>refresh</button>
+      {/* <Users /> */}
     </>
   );
 }
 
-export default Dashboard;
+export default AdminDashboard;

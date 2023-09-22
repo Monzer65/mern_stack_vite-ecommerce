@@ -5,9 +5,11 @@ import useAuth from "../hooks/UseAuth";
 import axios from "../api/Axios";
 import { FaSpinner } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useUserContext } from "../contexts/UserNameContext";
 
 const Login = () => {
   const { setAuth, persist, setPersist } = useAuth();
+  const { setUserProfile } = useUserContext();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,12 +51,13 @@ const Login = () => {
           withCredentials: true,
         }
       );
+
       const accessToken = response?.data?.accessToken;
-      const roles = response?.data?.roles;
       const userName = response?.data?.userName;
+      localStorage.setItem("userName", userName);
 
-      setAuth({ contact, password, roles, accessToken, userName });
-
+      setAuth({ contact, accessToken, userName });
+      setUserProfile(userName);
       setContact("");
       setPassword("");
       setLoading(false);
@@ -106,7 +109,7 @@ const Login = () => {
         <form onSubmit={handleSubmit} noValidate>
           <p className="error">{errorMsg}</p>
           <div className="form-group">
-            <label htmlFor="contact">Email or Phone</label>
+            <label htmlFor="contact">تلفن یا ایمیل</label>
             <input
               type="text"
               ref={nameRef}
@@ -121,7 +124,7 @@ const Login = () => {
             {contactError && <p className="error">{contactError}</p>}
           </div>
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">پسورد</label>
             <input
               type="password"
               id="password"
@@ -140,14 +143,14 @@ const Login = () => {
           >
             {loading ? <FaSpinner className="loading-icon" /> : "ورود"}
           </button>
-          <div className="persistCheck">
+          <div className="form-group persist-form-group">
+            <label htmlFor="persist">ذخیره حالت ورود روی این دستگاه</label>
             <input
               type="checkbox"
               id="persist"
               onChange={togglePersist}
               checked={persist}
             />
-            <label htmlFor="persist">Trust This Device</label>
           </div>
         </form>
         <p>

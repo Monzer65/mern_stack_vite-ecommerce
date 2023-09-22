@@ -18,12 +18,12 @@ const useRefreshToken = () => {
         }
       );
       const newAccessToken = response.data.accessToken;
+      const userName = response.data.userName;
 
       setAuth((prevAuth) => ({
         ...prevAuth,
         accessToken: newAccessToken,
-        roles: response.data.roles,
-        userName: response.data.userName,
+        userName: userName,
       }));
       console.log(newAccessToken);
       return newAccessToken;

@@ -22,7 +22,7 @@ export default function Cart() {
                   className="list-item-image"
                 />
                 <div className="list-item-info">
-                  <h1>{item.name}</h1>
+                  <h3>{item.name}</h3>
                   <p className="text-gray-600">${item.price}</p>
                 </div>
                 <div className="list-item-buttons">
@@ -35,25 +35,35 @@ export default function Cart() {
                     +
                   </button>
                   <p className="item-quantity">{item.quantity}</p>
-                  <button
-                    className="cart-btn"
-                    onClick={() => {
-                      removeFromCart(item);
-                    }}
-                  >
-                    -
-                  </button>
+                  {item.quantity > 1 ? (
+                    <button
+                      className="cart-btn"
+                      onClick={() => {
+                        removeFromCart(item);
+                      }}
+                    >
+                      -
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        removeFromCart(item);
+                      }}
+                    >
+                      حذف
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <h1>Your cart is empty</h1>
+          <h2>Your cart is empty</h2>
         )}
 
         {cartItems.length > 0 && (
           <div className="cart-total">
-            <h1>Total: ${getCartTotal()}</h1>
+            <h2>Total: ${getCartTotal()}</h2>
             <button
               className="remove-btn"
               onClick={() => {

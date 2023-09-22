@@ -1,0 +1,6 @@
+/** @format */
+
+header a,
+header .navigation a {
+  color: var(--background-color);
+}

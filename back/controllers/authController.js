@@ -284,8 +284,6 @@ module.exports = {
       res.json({
         message: "ورود موفق",
         accessToken: tokens.accessToken,
-        roles: user.roles,
-        userId: user._id,
         userName: user.name,
       });
     } catch (err) {
@@ -359,7 +357,7 @@ module.exports = {
 
       if (oldAccessToken) {
         // Create a new RevokedToken document for the old access token
-        await RevokedToken.create({ token: oldAccessToken, user: user._id });
+        await RevokedToken.create({ token: oldAccessToken });
       }
 
       const tokens = await generateTokens(user);
@@ -374,7 +372,6 @@ module.exports = {
       // Return the new access token
       res.json({
         accessToken: tokens.accessToken,
-        roles: user.roles,
         userName: user.name,
       });
     } catch (err) {

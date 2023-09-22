@@ -22,7 +22,7 @@ function SearchBox() {
     let apiUrl = "http://localhost:3000/api/products/search";
 
     if (!query && selectedCategory === "all") {
-      setInputError("No search query or category provided.");
+      setInputError("چیزی برای جستجو وارد نکردی");
       return;
     }
 

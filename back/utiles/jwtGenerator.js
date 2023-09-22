@@ -8,15 +8,15 @@ async function generateTokens(user) {
   const accessToken = jwt.sign(
     { userId: user._id, userName: user.name, roles: user.roles },
     secretKey,
-    { expiresIn: "2m" }
+    { expiresIn: "20m" }
   );
 
   const version = user.refreshTokenVersion + 1;
 
   const refreshToken = jwt.sign(
-    { userId: user._id, version, userName: user.name, roles: user.roles },
+    { userId: user._id, version },
     refreshSecretKey,
-    { expiresIn: "2h" }
+    { expiresIn: "15d" }
   );
 
   await User.updateOne(
