@@ -812,3 +812,43 @@ form label {
 .dropdown:focus .dropbtn {
   background-color: #3e8e41;
 }
+
+/* CSS for the button and dropdown container */
+.category-dropdown {
+  position: relative; /* Needed for positioning the dropdown */
+}
+
+.category-dropdown button {
+  background-color: #007bff; /* Button background color */
+  color: #fff; /* Button text color */
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.category-list {
+  display: none; /* Initially hide the dropdown */
+  position: absolute; /* Position it relative to the container */
+  top: 100%; /* Position it below the button */
+  left: 0;
+  background-color: #fff; /* Dropdown background color */
+  border: 1px solid #ccc;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-list li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s; /* Add a smooth transition effect */
+}
+
+.category-list li:hover {
+  background-color: #f0f0f0; /* Background color on hover */
+}
+
+/* Show the dropdown when category-dropdown-visible class is applied */
+.category-dropdown.active .category-list {
+  display: block;
+}

@@ -9,7 +9,6 @@ import ProductCard from "./ProductCard";
 function ProductList() {
   const location = useLocation();
   const navigate = useNavigate();
-
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -18,33 +17,12 @@ function ProductList() {
   const [totalPages, setTotalPages] = useState(1);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [categoryDropdownVisible, setCategoryDropdownVisible] = useState(false);
   const [selectedConditions, setSelectedConditions] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [conditions, setConditions] = useState([]);
   const [brands, setBrands] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
-  const fetchCategories = async () => {
-    try {
-      const { data } = await axios.get("http://localhost:3000/api/categories");
-      setCategories(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const fetchConditionsAndBrands = async () => {
-    try {
-      const { data } = await axios.get(
-        "http://localhost:3000/api/products/conditions-and-brands"
-      );
-      setConditions(data.conditions);
-      setBrands(data.brands);
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const fetchProducts = async () => {
     try {
@@ -70,6 +48,27 @@ function ProductList() {
       setLoading(false);
     } catch (err) {
       setLoading(false);
+      console.log(err);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:3000/api/categories");
+      setCategories(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchConditionsAndBrands = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:3000/api/products/conditions-and-brands"
+      );
+      setConditions(data.conditions);
+      setBrands(data.brands);
+    } catch (err) {
       console.log(err);
     }
   };
@@ -104,6 +103,15 @@ function ProductList() {
       .join("&");
 
     navigate(`${location.pathname}?${queryString}`, { replace: true });
+  };
+
+  const toggleCategoryDropdown = () => {
+    setCategoryDropdownVisible((prev) => !prev);
+  };
+
+  const handleCategorySelection = (categoryId) => {
+    setSelectedCategory(categoryId);
+    setCategoryDropdownVisible(false);
   };
 
   const handleConditionChange = (condition) => {
@@ -171,7 +179,7 @@ function ProductList() {
         />
         <button type="submit">Search</button>
       </form>
-      <select
+      {/* <select
         value={selectedCategory}
         onChange={(e) => {
           setSelectedCategory(e.target.value);
@@ -186,7 +194,27 @@ function ProductList() {
             {category.name}
           </option>
         ))}
-      </select>
+      </select> */}
+      <div
+        className={`category-dropdown ${
+          categoryDropdownVisible ? "active" : ""
+        }`}
+      >
+        <button onClick={toggleCategoryDropdown}>Select Category</button>
+        {categoryDropdownVisible && (
+          <ul className="category-list">
+            <li>All Categories</li>
+            {categories?.map((category) => (
+              <li
+                key={category._id}
+                onClick={() => handleCategorySelection(category._id)}
+              >
+                {category.name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       <select
         value={sort}
         onChange={(e) => {
