@@ -1,13 +1,38 @@
 /** @format */
 
 .footer {
-  background-color: #333;
-  color: white;
+  background-color: #004669;
+  color: #fff;
   padding: 20px;
   text-align: center;
 }
 
-/* Define the styles for the text */
-.text {
-  font-size: 18px;
+/* Style the footer links */
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer ul li {
+  margin-bottom: 10px;
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Responsive styles */
+@media (min-width: 768px) {
+  .footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .footer ul {
+    flex-basis: 33.33%;
+    text-align: left;
+  }
 }

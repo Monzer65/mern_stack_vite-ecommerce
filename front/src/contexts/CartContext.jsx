@@ -28,6 +28,10 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const removeWholeItemFromCart = (item) => {
+    setCartItems(cartItems.filter((cartItem) => cartItem._id !== item._id));
+  };
+
   const removeFromCart = (item) => {
     const isItemInCart = cartItems.find(
       (cartItem) => cartItem._id === item._id
@@ -72,6 +76,7 @@ export const CartProvider = ({ children }) => {
       value={{
         cartItems,
         addToCart,
+        removeWholeItemFromCart,
         removeFromCart,
         clearCart,
         getCartTotal,

@@ -29,7 +29,7 @@ function NameUpdateForm() {
   return (
     <div className="form-container">
       <h1 className="form-title">Update Name</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="name">your new name</label>
           <input

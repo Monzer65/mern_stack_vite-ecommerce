@@ -2,19 +2,20 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../components/AxiosInstance";
+import useAxiosPrivate from "../hooks/UseAxiosPrivate";
 
 function EmailUpdateForm() {
   const [newEmail, setNewEmail] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const axiosPrivate = useAxiosPrivate();
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.put("/profile/update-email", {
+      const response = await axiosPrivate.put("/profile/update-email", {
         newEmail,
       });
       console.log(response);
@@ -28,7 +29,7 @@ function EmailUpdateForm() {
   return (
     <div className="form-container">
       <h1 className="form-title">Update Email</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="confirm-password">your new email</label>
           <input

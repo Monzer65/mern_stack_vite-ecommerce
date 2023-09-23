@@ -1,0 +1,17 @@
+/** @format */
+
+.product-list-contaoner {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  box-shadow: 1px 1px 5px rgb(207, 205, 205);
+  margin: 1rem auto;
+}
+.product-list-contaoner ul {
+  display: grid;
+  cursor: pointer;
+}
+.product-list-contaoner ul li img {
+  display: block;
+  width: 200px;
+}

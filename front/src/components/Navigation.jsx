@@ -4,27 +4,22 @@ import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import HamburgerMenu from "./HamburgerMenu";
 import { CartContext } from "../contexts/CartContext";
+import "../assets/styles/navBar.css";
 
 const Navigation = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
-
   const { cartItems } = useContext(CartContext);
 
   return (
     <nav className="navigation-container">
-      <HamburgerMenu isOpen={menuOpen} toggleMenu={toggleMenu} />{" "}
+      <HamburgerMenu isOpen={menuOpen} toggleMenu={toggleMenu} />
       <ul className={`navigation ${menuOpen ? "open" : ""}`}>
         <li>
-          <Link to="/" onClick={() => setMenuOpen(false)}>
-            Home
-          </Link>
-        </li>
-        <li>
           <Link to="/products" onClick={() => setMenuOpen(false)}>
-            Products
+            all Products
           </Link>
         </li>
         <li>
@@ -35,7 +30,7 @@ const Navigation = () => {
             }}
             onClick={() => setMenuOpen(false)}
           >
-            Profile
+            پروفایل
           </Link>
         </li>
         <li>

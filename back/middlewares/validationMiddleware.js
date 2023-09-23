@@ -100,20 +100,23 @@ module.exports = {
 
   validateUpdateAddress: [
     body("postalCode")
-      .optional()
+      .optional({ checkFalsy: true })
       .trim()
-      .isNumeric()
-      .withMessage("Postal code must be digits")
       .isLength({ min: 10, max: 10 })
-      .withMessage("Postal code must be 10 characters"),
+      .withMessage("Postal code must be 10 characters")
+      .bail()
+      .isNumeric()
+      .withMessage("Postal code must be digits"),
+
     body("postalPhone")
-      .optional()
+      .optional({ checkFalsy: true })
       .trim()
       .isLength({ min: 4, max: 20 })
       .withMessage("Postal phone must be between 4 and 20 characters")
       .bail()
       .isMobilePhone()
       .withMessage("Invalid phone number"),
+
     body("apartment")
       .optional()
       .trim()

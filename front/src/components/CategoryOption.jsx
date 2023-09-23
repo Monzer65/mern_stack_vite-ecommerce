@@ -5,7 +5,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import "../assets/styles/CategoryOption.css";
-import { FaAngleRight, FaAngleDown } from "react-icons/fa"; // Import arrow icons
+import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 
 function CategoryOption({ category, onSelectCategory }) {
   const [isOpen, setIsOpen] = useState(false);

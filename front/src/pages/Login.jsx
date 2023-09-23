@@ -144,7 +144,7 @@ const Login = () => {
             {loading ? <FaSpinner className="loading-icon" /> : "ورود"}
           </button>
           <div className="form-group persist-form-group">
-            <label htmlFor="persist">ذخیره حالت ورود روی این دستگاه</label>
+            <label htmlFor="persist">ذخیره وضعیت ورود</label>
             <input
               type="checkbox"
               id="persist"

@@ -1,7 +1,8 @@
 /** @format */
 
 import { useState } from "react";
-import axiosInstance from "../components/AxiosInstance";
+import useAxiosPrivate from "../hooks/UseAxiosPrivate";
+
 import { useNavigate } from "react-router-dom";
 
 function AddressUpdateForm() {
@@ -13,6 +14,7 @@ function AddressUpdateForm() {
     city: "",
     province: "",
   });
+  const axiosPrivate = useAxiosPrivate();
 
   const [errors, setErrors] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
@@ -30,7 +32,7 @@ function AddressUpdateForm() {
     e.preventDefault();
 
     try {
-      const response = await axiosInstance.put(
+      const response = await axiosPrivate.put(
         "/profile/update-address",
         formData
       );
@@ -53,24 +55,24 @@ function AddressUpdateForm() {
       {successMessage && (
         <div className="success-message">{successMessage}</div>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
-          <label htmlFor="postal-code">postal code</label>
+          <label htmlFor="postalCode">postal code</label>
           <input
             type="text"
-            name="postal-code"
+            name="postalCode"
             placeholder="Postal Code"
             value={formData.postalCode}
             onChange={handleChange}
           />
         </div>
         <div className="form-group">
-          <label htmlFor="postal-Phone">postal phone</label>
+          <label htmlFor="postalPhone">postal phone</label>
           <input
             type="text"
-            name="postal-phone"
+            name="postalPhone"
             placeholder="Postal phone"
-            value={formData.postalCode}
+            value={formData.postalPhone}
             onChange={handleChange}
           />
         </div>

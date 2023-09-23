@@ -1,7 +1,7 @@
 /** @format */
 
-// 404.js
 import { Link } from "react-router-dom";
+import "../assets/styles/pageNotFound404.css";
 
 const NotFound = () => {
   return (

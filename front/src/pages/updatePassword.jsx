@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../components/AxiosInstance";
+import useAxiosPrivate from "../hooks/UseAxiosPrivate";
 
 function PasswordUpdateForm() {
   const [oldPassword, setOldPassword] = useState("");
@@ -10,6 +10,7 @@ function PasswordUpdateForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const axiosPrivate = useAxiosPrivate();
 
   const navigate = useNavigate();
 
@@ -20,7 +21,7 @@ function PasswordUpdateForm() {
       return;
     }
     try {
-      const response = await axiosInstance.put("/profile/update-password", {
+      const response = await axiosPrivate.put("/profile/update-password", {
         oldPassword,
         newPassword,
       });
@@ -37,7 +38,7 @@ function PasswordUpdateForm() {
   return (
     <div className="form-container">
       <h1 className="form-title">Update Password</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="old-password">Old Password</label>
           <input

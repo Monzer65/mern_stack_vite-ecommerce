@@ -6,6 +6,7 @@ import useAxiosPrivate from "../hooks/UseAxiosPrivate";
 import useLogout from "../hooks/UseLogout";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../contexts/UserNameContext";
+import "../assets/styles/userProfile.css";
 
 const UserProfile = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -53,43 +54,43 @@ const UserProfile = () => {
   };
 
   return (
-    <div>
-      <h1>User Profile</h1>
+    <div className="profile-wrapper">
+      <h1>اطلاعات حساب کاربری</h1>
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
-      <div>
-        <div>
-          <p>Name: {profile.name}</p>
-          <Link to={"/profile/update-name"}>edit</Link>
+      <div className="profile-contianer">
+        <div className="profile-field">
+          <p>نام: {profile.name}</p>
+          <Link to={"/profile/update-name"}>ویرایش</Link>
         </div>
-        <div>
-          <p>Email: {profile.email}</p>
-          <Link to={"/profile/update-email"}>edit</Link>
+        <div className="profile-field">
+          <p>ایمیل: {profile.email}</p>
+          <Link to={"/profile/update-email"}>ویرایش</Link>
         </div>
-        <div>
-          <p>Phone: {profile.phone}</p>
-          <Link to={"/profile/update-phone"}>edit</Link>
+        <div className="profile-field">
+          <p>تلفن اصلی: {profile.phone}</p>
+          <Link to={"/profile/update-phone"}>ویرایش</Link>
         </div>
-        <div>
-          <p>Password:</p>
-          <button>
-            <Link to={"/profile/update-password"}>edit</Link>
-          </button>
+        <div className="profile-field">
+          <p>پسورد: (غیرقابل نمایش)</p>
+          <Link to={"/profile/update-password"}>ویرایش</Link>
         </div>
-        <div>
-          <p>
-            Address:
-            <span>province: {profile.province} </span>
-            <span>city: {profile.city} </span>
-            <span>street: {profile.street} </span>
-            <span>apartment: {profile.apartment} </span>
-            <span>postal code:{profile.postalCode} </span>
-            <span>postal phone:{profile.postalPhone} </span>
-          </p>
-          <Link to={"/profile/update-address"}>edit</Link>
+        <div className="profile-field address-field">
+          <ul className="address">
+            <h3>آدرس:</h3>
+            <li>استان: {profile.province}</li>
+            <li>شهرستان: {profile.city}</li>
+            <li>خیابان و کوچه: {profile.street}</li>
+            <li>پلاک: {profile.apartment}</li>
+            <li>کد پستی: {profile.postalCode}</li>
+            <li>تلفن پستی: {profile.postalPhone}</li>
+          </ul>
+          <Link to={"/profile/update-address"}>ویرایش</Link>
         </div>
       </div>
-      <button onClick={signOut}>خروج</button>
+      <button onClick={signOut} className="profile-exit-btn">
+        خروج
+      </button>
     </div>
   );
 };

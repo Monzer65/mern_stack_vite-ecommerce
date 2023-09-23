@@ -7,6 +7,7 @@ import { ImSpinner2 } from "react-icons/im";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import ProductCard from "./ProductCard";
 import CategoryOption from "./CategoryOption";
+import "../assets/styles/productList.css";
 
 function ProductList() {
   const location = useLocation();
@@ -127,6 +128,7 @@ function ProductList() {
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
+    updateUrl();
     await fetchProducts();
     setSelectedCategory("");
     setSort("");
