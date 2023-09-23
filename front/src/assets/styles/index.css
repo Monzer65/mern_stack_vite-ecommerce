@@ -68,24 +68,9 @@ h1 {
 
 button {
   font-family: "Rubik", sans-serif;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  background-color: #c5c0c0;
   cursor: pointer;
   transition: all 0.25s;
-}
-
-button:hover {
-  background-color: #ff8800;
-  border-color: #4e2d07;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 2px auto -webkit-focus-ring-color;
+  border: none;
 }
 
 input {

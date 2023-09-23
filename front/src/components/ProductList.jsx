@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ImSpinner2 } from "react-icons/im";
+import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import ProductCard from "./ProductCard";
+import CategoryOption from "./CategoryOption";
 
 function ProductList() {
   const location = useLocation();
@@ -15,14 +17,32 @@ function ProductList() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
   const [totalPages, setTotalPages] = useState(1);
+
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [categoryDropdownVisible, setCategoryDropdownVisible] = useState(false);
   const [selectedConditions, setSelectedConditions] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [conditions, setConditions] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleCategory = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const fetchConditionsAndBrands = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:3000/api/products/conditions-and-brands"
+      );
+      setConditions(data.conditions);
+      setBrands(data.brands);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -48,27 +68,6 @@ function ProductList() {
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      console.log(err);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const { data } = await axios.get("http://localhost:3000/api/categories");
-      setCategories(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const fetchConditionsAndBrands = async () => {
-    try {
-      const { data } = await axios.get(
-        "http://localhost:3000/api/products/conditions-and-brands"
-      );
-      setConditions(data.conditions);
-      setBrands(data.brands);
-    } catch (err) {
       console.log(err);
     }
   };
@@ -103,15 +102,6 @@ function ProductList() {
       .join("&");
 
     navigate(`${location.pathname}?${queryString}`, { replace: true });
-  };
-
-  const toggleCategoryDropdown = () => {
-    setCategoryDropdownVisible((prev) => !prev);
-  };
-
-  const handleCategorySelection = (categoryId) => {
-    setSelectedCategory(categoryId);
-    setCategoryDropdownVisible(false);
   };
 
   const handleConditionChange = (condition) => {
@@ -166,6 +156,41 @@ function ProductList() {
     setSelectedBrands(params.getAll("brands") || []);
   }, []);
 
+  function buildCategoryTree(categories, parentId = null) {
+    const categoryTree = [];
+    for (const category of categories) {
+      if (category.parent === parentId) {
+        const children = buildCategoryTree(categories, category._id);
+        if (children.length) {
+          category.children = children;
+        }
+        categoryTree.push(category);
+      }
+    }
+    return categoryTree;
+  }
+
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:3000/api/categories");
+      const nestedCategories = buildCategoryTree(data);
+      setCategories(nestedCategories);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const majorParentCategories = categories.filter(
+    (category) => category.parent === null
+  );
+
+  const handleCategorySelection = (categoryId) => {
+    setSelectedCategory(categoryId);
+    setSort("");
+    setPage(1);
+    setLimit(20);
+  };
+
   return (
     <div>
       <form onSubmit={handleSearch}>
@@ -179,42 +204,34 @@ function ProductList() {
         />
         <button type="submit">Search</button>
       </form>
-      {/* <select
-        value={selectedCategory}
-        onChange={(e) => {
-          setSelectedCategory(e.target.value);
-          setSort("");
-          setPage(1);
-          setLimit(20);
-        }}
-      >
-        <option value="">All Categories</option>
-        {categories?.map((category) => (
-          <option key={category._id} value={category._id}>
-            {category.name}
-          </option>
-        ))}
-      </select> */}
-      <div
-        className={`category-dropdown ${
-          categoryDropdownVisible ? "active" : ""
-        }`}
-      >
-        <button onClick={toggleCategoryDropdown}>Select Category</button>
-        {categoryDropdownVisible && (
-          <ul className="category-list">
-            <li>All Categories</li>
-            {categories?.map((category) => (
-              <li
+      <ul className="category-drop-down">
+        <li className="all-categories-option">
+          <button
+            onClick={() => {
+              setSelectedCategory("");
+              setSort("");
+              setPage(1);
+              setLimit(20);
+            }}
+          >
+            All Categories
+          </button>
+          <button className="category-toggle" onClick={toggleCategory}>
+            {isOpen ? <FaAngleDown /> : <FaAngleRight />}
+          </button>
+        </li>
+        <li className="major-categories-option">
+          {isOpen &&
+            majorParentCategories?.map((category) => (
+              <CategoryOption
+                category={category}
                 key={category._id}
-                onClick={() => handleCategorySelection(category._id)}
-              >
-                {category.name}
-              </li>
+                onSelectCategory={handleCategorySelection}
+              />
             ))}
-          </ul>
-        )}
-      </div>
+        </li>
+      </ul>
+
       <select
         value={sort}
         onChange={(e) => {

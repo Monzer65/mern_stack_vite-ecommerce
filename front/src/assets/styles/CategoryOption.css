@@ -1,0 +1,20 @@
+/** @format */
+
+.category-drop-down {
+  border: solid khaki;
+  /* width: 150px; */
+}
+
+.all-categories-option {
+  text-align: center;
+  border: solid darkcyan;
+}
+
+.category-option {
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  display: grid;
+  align-items: center;
+  cursor: pointer;
+}
