@@ -14,7 +14,16 @@ function Store() {
         const { data } = await axios.get("http://localhost:3000/api/products");
 
         const productsArray = data.products;
-        setProducts(productsArray);
+
+        // const categoryProducts = productsArray.filter((product) =>
+        //   product.category.includes("64f0523dc4a09e94dc7d73df")
+        // );
+
+        const featuredProducts = productsArray.filter(
+          (product) => product.featured === true
+        );
+
+        setProducts(featuredProducts);
       } catch (err) {
         console.log(err);
       }

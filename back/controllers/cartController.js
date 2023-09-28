@@ -4,7 +4,7 @@ const Cart = require("../models/Cart");
 module.exports = {
   async getCart(req, res) {
     try {
-      const userId = req.user._id; // Extracted from JWT middleware
+      const userId = req.userId; // Extracted from JWT middleware
       const cart = await Cart.findOne({ userId }).populate(
         "products.productId"
       );

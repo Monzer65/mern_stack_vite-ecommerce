@@ -1,21 +1,24 @@
 /** @format */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../assets/styles/slide.css";
 
 const Slide = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [categories, setCategories] = useState("");
+  const navigate = useNavigate();
 
-  const {
-    data: categories,
-    loading,
-    error,
-  } = axios("http://localhost:3000/api/categories/featured", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  useEffect(() => {
+    async function fetchCategories() {
+      const { data: categories } = await axios.get(
+        "http://localhost:3000/api/categories/featured"
+      );
+      setCategories(categories);
+    }
+    fetchCategories();
+  }, []);
 
   const handlePrev = () => {
     setCurrentIndex((prevIndex) =>
@@ -29,14 +32,6 @@ const Slide = () => {
     );
   };
 
-  if (loading) {
-    return <div>Loading…</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   if (!categories || categories.length === 0) {
     return (
       <div className="slide-container">No featured categories available.</div>
@@ -44,9 +39,20 @@ const Slide = () => {
   }
 
   const currentcategory = categories[currentIndex];
+
+  const selectedCategoryId = currentcategory._id;
+
+  // Wrap navigate in a callback function
+  const navigateToCategory = () => {
+    navigate(
+      `/products?page=1&limit=20&search=&sort=&category=${selectedCategoryId}`
+    );
+  };
+
   return (
     <div className="slide-container">
-      <div className="slide">
+      {/* Attach the onClick event to the callback function */}
+      <div className="slide" onClick={navigateToCategory}>
         <img src={currentcategory?.image} alt={currentcategory?.name} />
         <h3>{currentcategory.name}</h3>
       </div>

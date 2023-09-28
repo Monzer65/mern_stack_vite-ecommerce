@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { useUserContext } from "../contexts/UserNameContext";
 import logo from "../assets/logos/mainLogo.png";
+import SearchBox from "./SearchBox";
 import { Link, useNavigate } from "react-router-dom";
 import "../assets/styles/header.css";
 import useLogout from "../hooks/UseLogout";
@@ -39,9 +40,7 @@ function Header() {
         setIsOpen(false);
       }
     };
-
     document.addEventListener("mousedown", checkIfClickedOutside);
-    // add the event listener
     return () => {
       // remove the event listener on cleanup
       document.removeEventListener("mousedown", checkIfClickedOutside);
@@ -65,61 +64,80 @@ function Header() {
 
   return (
     <header>
-      <ul>
-        <li>
-          <Link to="/">
-            <img src={logo} className="logo" alt="site logo" />
-          </Link>
-        </li>
-        <li className="dropdown">
+      <div className="logo-container">
+        <Link to="/">
+          <img src={logo} className="logo" alt="site logo" />
+        </Link>
+      </div>
+      <div className="searchbox-container">
+        <SearchBox />
+      </div>
+      <div className="nav-container">
+        <>
           {userName ? (
-            <div onClick={toggleMenu}>
-              <button>{isOpen ? <FaAngleDown /> : <FaAngleLeft />}</button>
-              <Link to={"/profile"} className="dropbtn">
+            <div className="dropdown">
+              <button onClick={toggleMenu} className="dropbtn">
+                {isOpen ? <FaAngleDown /> : <FaAngleLeft />}
+              </button>
+              <Link to={"/profile"} className="fetched-username">
                 {userName}، سلام
               </Link>
               {isOpen && (
-                <div className="dropdown-content" ref={ref}>
+                <div
+                  className="dropdown-content"
+                  ref={ref}
+                  onClick={toggleMenu}
+                >
                   <Link to={"/profile"}>
-                    پروفایل <FaUserAlt />
+                    <span>پروفایل </span>
+                    <span>
+                      <FaUserAlt />
+                    </span>
                   </Link>
                   <Link>
-                    سفارشات من <FaClipboardList />
+                    <span>سفارشات من </span>
+                    <span>
+                      <FaClipboardList />
+                    </span>
                   </Link>
                   <Link>
-                    لیست تماشا <FaThList />
+                    <span>لیست تماشا </span>
+                    <span>
+                      <FaThList />
+                    </span>
                   </Link>
                   <Link onClick={signOut} className="exit-btn">
-                    خروج <FaSignOutAlt />
+                    <span>خروج </span>
+                    <span>
+                      <FaSignOutAlt />
+                    </span>
                   </Link>
                 </div>
               )}
             </div>
           ) : (
-            <>
+            <div className="login-signup-links">
               <Link to={"/register"}>
-                <div className="header-nav">
-                  <div>ثبت نام</div>
-                  <SiGnuprivacyguard />
-                </div>
+                <SiGnuprivacyguard />
+                <span>ثبت نام</span>
               </Link>
               <Link to="/login">
-                <div className="header-nav">
-                  <div>ورود</div>
-                  <FaSignInAlt />
-                </div>
+                <FaSignInAlt />
+                <span>ورود</span>
               </Link>
-            </>
-          )}
-          <Link to={"/cart"} className="header-cart-logo">
-            <div className="header-nav">
-              سبد
-              <FaShoppingCart />
-              <span className="cart-length">{cartItems.length}</span>
             </div>
+          )}
+        </>
+        <div className="cart">
+          <Link to={"/cart"} className="cart-link">
+            <span className="cart-icon">
+              <FaShoppingCart />
+            </span>
+            <span className="counter">{cartItems.length}</span>
+            <span className="sabad">سبد</span>
           </Link>
-        </li>
-      </ul>
+        </div>
+      </div>
     </header>
   );
 }

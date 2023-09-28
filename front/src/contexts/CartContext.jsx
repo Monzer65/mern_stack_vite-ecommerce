@@ -1,30 +1,44 @@
 /** @format */
 import { createContext, useEffect, useState } from "react";
+import useAuth from "../hooks/UseAuth";
 import PropTypes from "prop-types";
+import { axiosPrivate } from "../api/Axios";
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+  const { auth } = useAuth();
+
   const [cartItems, setCartItems] = useState(
     localStorage.getItem("cartItems")
       ? JSON.parse(localStorage.getItem("cartItems"))
       : []
   );
-  const addToCart = (item) => {
-    const isItemInCart = cartItems.find(
-      (cartItem) => cartItem._id === item._id
-    );
 
-    if (isItemInCart) {
-      setCartItems(
-        cartItems.map((cartItem) =>
-          cartItem._id === item._id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        )
-      );
+  const addToCart = async (item) => {
+    if (auth.user) {
+      try {
+        const response = await axiosPrivate.post("/cart/add", item);
+        setCartItems(response.data.cart);
+      } catch (error) {
+        console.log(error);
+      }
     } else {
-      setCartItems([...cartItems, { ...item, quantity: 1 }]);
+      const isItemInCart = cartItems.find(
+        (cartItem) => cartItem._id === item._id
+      );
+
+      if (isItemInCart) {
+        setCartItems(
+          cartItems.map((cartItem) =>
+            cartItem._id === item._id
+              ? { ...cartItem, quantity: cartItem.quantity + 1 }
+              : cartItem
+          )
+        );
+      } else {
+        setCartItems([...cartItems, { ...item, quantity: 1 }]);
+      }
     }
   };
 

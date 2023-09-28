@@ -1,17 +1,15 @@
 /** @format */
 
-.product-list-contaoner {
+.product-cards-list {
   display: flex;
-  gap: 1.5rem;
   flex-wrap: wrap;
-  box-shadow: 1px 1px 5px rgb(207, 205, 205);
-  margin: 1rem auto;
+  justify-content: center;
+  gap: 20px;
 }
-.product-list-contaoner ul {
-  display: grid;
-  cursor: pointer;
-}
-.product-list-contaoner ul li img {
-  display: block;
-  width: 200px;
+
+@media screen and (max-width: 768px) {
+  .product-cards-list {
+    flex-direction: column;
+    align-items: center;
+  }
 }

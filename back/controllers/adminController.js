@@ -18,7 +18,7 @@ module.exports = {
         return res.status(404).send("User not found");
       }
 
-      if (role === "admin") {
+      if (roles === "admin") {
         // main logic goes here
         const carts = await Cart.find().populate({
           path: "products.productId",

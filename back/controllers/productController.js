@@ -69,32 +69,37 @@ module.exports = {
 
   async getProducts(req, res) {
     try {
-      const { category, conditions, brands, search, sort, page } = req.query;
+      const { category, conditions, brands, searchTerm, sort, page } =
+        req.query;
       const perPage = 20;
       const skip = (page - 1) * perPage;
 
       // Build the filter object based on query parameters
       const filter = {};
+
       if (category) {
         const descendantCategories = await getDescendants(category);
         filter.category = { $in: [...descendantCategories, category] };
       }
+
       if (conditions) {
         filter.condition = {
           $in: Array.isArray(conditions) ? conditions : [conditions],
         };
       }
+
       if (brands) {
         filter["manufacturer.brand"] = {
           $in: Array.isArray(brands) ? brands : [brands],
         };
       }
-      if (search) {
+
+      if (searchTerm) {
         // Use $regex to perform a case-insensitive search
         filter.$or = [
-          { name: { $regex: search, $options: "i" } }, // Search in product name
-          { description: { $regex: search, $options: "i" } }, // Search in product description
-          { tags: { $in: [search] } }, // Search in tags
+          { name: { $regex: searchTerm, $options: "i" } }, // Search in product name
+          { description: { $regex: searchTerm, $options: "i" } }, // Search in product description
+          { tags: { $in: [searchTerm] } }, // Search in tags
           // Add more fields if needed
         ];
       }
@@ -103,6 +108,7 @@ module.exports = {
 
       // Build the sort options based on query parameters
       const sortOptions = {};
+
       if (sort === "priceLowToHigh") {
         sortOptions.price = 1;
       } else if (sort === "priceHighToLow") {

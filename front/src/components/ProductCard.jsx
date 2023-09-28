@@ -19,27 +19,23 @@ function ProductCard({ product }) {
   };
 
   return (
-    <>
-      <div className="product-card">
-        <Link to={`/product/${product._id}`}>
-          <div className="image-container">
-            <img src={product.images[0]} alt={product.name} />
-          </div>
-          <div>
-            <div className="product-info-container">
-              <h3>{product.name}</h3>
-              <h2>{product.price}</h2>
-            </div>
-          </div>
-        </Link>
-        <button onClick={handleAddToCart}>Add to cart</button>
-        {showNotification && (
-          <div className="notification">
-            Product added to cart <span className="tick">✓</span>
-          </div>
-        )}
-      </div>
-    </>
+    <div className="product-card">
+      <Link to={`/product/${product._id}`}>
+        <div className="image-container">
+          <img src={product.images[0]} alt={product.name} />
+        </div>
+        <div className="product-info-container">
+          <p className="name">{product.name}</p>
+          <p className="price">${product.price}</p>
+          {showNotification && (
+            <p className="notification">
+              Product added to cart <span className="tick">✓</span>
+            </p>
+          )}
+        </div>
+      </Link>
+      <button onClick={handleAddToCart}>Add to cart</button>
+    </div>
   );
 }
 

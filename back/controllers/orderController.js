@@ -31,7 +31,7 @@ module.exports = {
     try {
       const user = req.user; // Extracted from JWT middleware
 
-      if (user.role !== "admin") {
+      if (user.roles !== "admin") {
         return res.status(403).json({ message: "Access denied" });
       }
 

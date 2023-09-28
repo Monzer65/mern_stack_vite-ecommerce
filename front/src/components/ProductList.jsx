@@ -7,30 +7,62 @@ import { ImSpinner2 } from "react-icons/im";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import ProductCard from "./ProductCard";
 import CategoryOption from "./CategoryOption";
+import { useSearch } from "../contexts/SearchContext";
 import "../assets/styles/productList.css";
 
 function ProductList() {
+  const { searchTerm, setSearchTerm, selectedCategory, setSelectedCategory } =
+    useSearch();
   const location = useLocation();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
   const [totalPages, setTotalPages] = useState(1);
-
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedConditions, setSelectedConditions] = useState([]);
-  const [selectedBrands, setSelectedBrands] = useState([]);
   const [conditions, setConditions] = useState([]);
+  const [selectedConditions, setSelectedConditions] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleCategory = () => {
-    setIsOpen(!isOpen);
+  const fetchProducts = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:3000/api/products", {
+        params: {
+          page,
+          limit,
+          searchTerm,
+          sort,
+          category: selectedCategory,
+          conditions: selectedConditions,
+          brands: selectedBrands,
+        },
+      });
+
+      const productsArray = data.products;
+      setProducts(productsArray);
+
+      const totalCount = data.count;
+      const totalPagesCount = Math.ceil(totalCount / limit);
+      setTotalPages(totalPagesCount);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:3000/api/categories");
+      const nestedCategories = buildCategoryTree(data);
+      setCategories(nestedCategories);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const fetchConditionsAndBrands = async () => {
@@ -45,39 +77,11 @@ function ProductList() {
     }
   };
 
-  const fetchProducts = async () => {
-    try {
-      const { data } = await axios.get("http://localhost:3000/api/products", {
-        params: {
-          page,
-          limit,
-          search,
-          sort,
-          category: selectedCategory,
-          conditions: selectedConditions,
-          brands: selectedBrands,
-        },
-      });
-
-      const productsArray = data.products;
-      setProducts(productsArray);
-
-      const totalCount = data.count;
-      const totalPagesCount = Math.ceil(totalCount / limit);
-      setTotalPages(totalPagesCount);
-
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-      console.log(err);
-    }
-  };
-
   const updateUrl = () => {
     const queryParams = {
       page,
       limit,
-      search,
+      searchTerm,
       sort,
       category: selectedCategory,
       conditions: selectedConditions,
@@ -105,6 +109,35 @@ function ProductList() {
     navigate(`${location.pathname}?${queryString}`, { replace: true });
   };
 
+  function buildCategoryTree(categories, parentId = null) {
+    const categoryTree = [];
+    for (const category of categories) {
+      if (category.parent === parentId) {
+        const children = buildCategoryTree(categories, category._id);
+        if (children.length) {
+          category.children = children;
+        }
+        categoryTree.push(category);
+      }
+    }
+    return categoryTree;
+  }
+
+  const majorParentCategories = categories.filter(
+    (category) => category.parent === null
+  );
+
+  const toggleCategory = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategory(categoryId);
+    setSort("");
+    setPage(1);
+    setLimit(20);
+  };
+
   const handleConditionChange = (condition) => {
     setSort("");
     setPage(1);
@@ -125,7 +158,7 @@ function ProductList() {
     setSelectedBrands(updatedBrands);
   };
 
-  const handleSearch = async (e) => {
+  const handleSearchTermChange = async (e) => {
     e.preventDefault();
     setLoading(true);
     updateUrl();
@@ -137,71 +170,36 @@ function ProductList() {
   };
 
   useEffect(() => {
-    fetchCategories();
-    fetchConditionsAndBrands();
-  }, []);
-
-  useEffect(() => {
     fetchProducts();
     setLoading(true);
     updateUrl();
   }, [page, limit, sort, selectedCategory, selectedConditions, selectedBrands]);
 
   useEffect(() => {
+    fetchCategories();
+    fetchConditionsAndBrands();
+  }, []);
+
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     setPage(Number(params.get("page")) || 1);
     setLimit(Number(params.get("limit")) || 10);
-    setSearch(params.get("search") || "");
+    setSearchTerm(params.get("searchTerm") || "");
     setSort(params.get("sort") || "");
     setSelectedCategory(params.get("category") || "");
     setSelectedConditions(params.getAll("conditions") || []);
     setSelectedBrands(params.getAll("brands") || []);
   }, []);
 
-  function buildCategoryTree(categories, parentId = null) {
-    const categoryTree = [];
-    for (const category of categories) {
-      if (category.parent === parentId) {
-        const children = buildCategoryTree(categories, category._id);
-        if (children.length) {
-          category.children = children;
-        }
-        categoryTree.push(category);
-      }
-    }
-    return categoryTree;
-  }
-
-  const fetchCategories = async () => {
-    try {
-      const { data } = await axios.get("http://localhost:3000/api/categories");
-      const nestedCategories = buildCategoryTree(data);
-      setCategories(nestedCategories);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const majorParentCategories = categories.filter(
-    (category) => category.parent === null
-  );
-
-  const handleCategorySelection = (categoryId) => {
-    setSelectedCategory(categoryId);
-    setSort("");
-    setPage(1);
-    setLimit(20);
-  };
-
   return (
     <div>
-      <form onSubmit={handleSearch}>
+      <form onSubmit={handleSearchTermChange}>
         <input
           type="text"
           placeholder="Search"
-          value={search}
+          value={searchTerm}
           onChange={(e) => {
-            setSearch(e.target.value);
+            setSearchTerm(e.target.value);
           }}
         />
         <button type="submit">Search</button>
@@ -228,7 +226,7 @@ function ProductList() {
               <CategoryOption
                 category={category}
                 key={category._id}
-                onSelectCategory={handleCategorySelection}
+                onSelectCategory={handleCategoryChange}
               />
             ))}
         </li>

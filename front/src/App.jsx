@@ -1,5 +1,4 @@
 /** @format */
-
 import { Route, Routes } from "react-router-dom";
 import PropTypes from "prop-types";
 import RequireAuth from "./components/RequireAuth";
@@ -27,7 +26,7 @@ import EmailVerificationForm from "./pages/VerifyNewEmail";
 import PasswordUpdateForm from "./pages/updatePassword";
 import AddressUpdateForm from "./pages/UpdateAddress";
 
-import AdminDashboard from "./pages/AdminDashBoard";
+import AdminDashboard from "./pages/admin/Home";
 
 import NotFound from "./pages/NotFound";
 import Layout from "./layout/Layout";
@@ -38,10 +37,30 @@ function App() {
   return (
     <Routes>
       <Route element={<PersistLogin />}>
+        <Route path="/admin" element={<RequireAuth allowedRoles={["admin"]} />}>
+          <Route index element={<AdminDashboard />} />
+          {/* <Route path="login" element={<Login />} />
+            <Route path="users">
+              <Route index element={<List />} />
+              <Route path=":userId" element={<Single />} />
+              <Route
+                path="new"
+                element={<New inputs={userInputs} title="Add New User" />}
+              />
+            </Route>
+            <Route path="products">
+              <Route index element={<List />} />
+              <Route path=":productId" element={<Single />} />
+              <Route
+                path="new"
+                element={<New inputs={productInputs} title="Add New Product" />}
+              />
+            </Route> */}
+        </Route>
         <Route path="/" element={<Layout />}>
           {/* products related routes: */}
-          <Route path="/home" element={<Home />} />
           <Route index element={<Store />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/success" element={<Success />} />
           <Route path="/cancel" element={<Cancel />} />
           <Route path="/search" element={<SearchResult />} />
@@ -53,10 +72,6 @@ function App() {
           <Route path="/verify" element={<Verification />} />
           <Route path="/login" element={<Login />} />
           {/* <Route path="/logout" element={<Logout />} /> */}
-
-          <Route element={<RequireAuth allowedRoles={["admin"]} />}>
-            <Route path="/admin" element={<AdminDashboard />} />
-          </Route>
 
           <Route element={<RequireAuth allowedRoles={["user", "admin"]} />}>
             {/* profile routes: */}

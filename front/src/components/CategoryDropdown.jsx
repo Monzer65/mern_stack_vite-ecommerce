@@ -16,7 +16,7 @@ function CategoryDropdown({ onChange }) {
   });
 
   return (
-    <div>
+    <div className="category-dropdown">
       {loading && <div>Loading...</div>}
       {error && <div>{error}</div>}
       {data && (

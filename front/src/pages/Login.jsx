@@ -3,12 +3,14 @@
 import { useRef, useState, useEffect } from "react";
 import useAuth from "../hooks/UseAuth";
 import axios from "../api/Axios";
+// import useAxiosPrivate from "../hooks/UseAxiosPrivate";
 import { FaSpinner } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useUserContext } from "../contexts/UserNameContext";
+// import { CartContext } from "../contexts/CartContext";
 
 const Login = () => {
-  const { setAuth, persist, setPersist } = useAuth();
+  const { auth, setAuth, persist, setPersist } = useAuth();
   const { setUserProfile } = useUserContext();
 
   const navigate = useNavigate();
@@ -24,6 +26,13 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  // const { cartItems, setCartItems } = useContext(CartContext);
+
+  // const axiosPrivate = useAxiosPrivate();
+
+  useEffect(() => {
+    if (auth) navigate("/");
+  }, [auth]);
 
   const handleContactChange = (e) => {
     setContact(e.target.value);

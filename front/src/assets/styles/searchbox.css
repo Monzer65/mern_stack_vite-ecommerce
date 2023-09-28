@@ -1,0 +1,57 @@
+/** @format */
+
+.searchbox {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.searchbox form {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.searchbox form input {
+  width: 100%;
+  padding-inline: 1rem;
+}
+
+.searchbox .submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(245, 112, 24);
+  width: 45px;
+  height: 40px;
+  border-radius: 0 5px 5px 0;
+}
+
+.searchbox .submit-btn span:first-child {
+  color: white;
+  padding-inline: 0.25rem;
+}
+.searchbox .search-icon {
+  color: white;
+  width: 100%;
+}
+
+.search-error {
+  position: absolute;
+  top: 4rem;
+  right: 1rem;
+  color: red;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 1px 1px 1px 1px rgba(206, 187, 187, 0.5);
+  border-radius: 5px;
+  padding: 0.25rem;
+}
+
+@media (width < 769px) {
+  .searchbox .category-dropdown {
+    display: none;
+  }
+  .searchbox input {
+    border-radius: 5px 0 0 5px;
+  }
+}
