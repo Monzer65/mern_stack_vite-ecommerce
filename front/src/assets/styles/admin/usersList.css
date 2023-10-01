@@ -1,0 +1,49 @@
+/** @format */
+.users-list {
+  /* direction: rtl; */
+  display: flex;
+  width: 100%;
+  font-size: var(--fs-300);
+}
+
+.users-list .listContainer {
+  flex: 6;
+  padding: 0;
+  margin: 0;
+}
+
+.users-list h2 {
+  margin: 1rem 2rem;
+}
+.users-list table {
+  border-collapse: collapse;
+  width: max-content;
+  margin: 2rem;
+}
+
+.users-list th,
+.users-list td {
+  padding: 10px;
+  text-align: left;
+}
+
+.users-list th {
+  background-color: #4caf50;
+  color: white;
+}
+
+.users-list tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+@media (max-width: 768px) {
+  .users-list .listContainer {
+    flex: auto;
+  }
+  .users-list h2 {
+    margin: 1rem 0;
+  }
+  .users-list table {
+    margin: 0;
+  }
+}

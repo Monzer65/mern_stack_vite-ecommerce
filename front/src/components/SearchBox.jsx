@@ -1,46 +1,52 @@
 /** @format */
 
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSearch } from "../contexts/SearchContext";
 import { FaSearch } from "react-icons/fa";
 import CategoryDropdown from "./CategoryDropdown";
-import { useSearch } from "../contexts/SearchContext";
 import "../assets/styles/searchbox.css";
 
 function SearchBox() {
-  const { searchTerm, setSearchTerm, selectedCategory, setSelectedCategory } =
-    useSearch();
+  const { setSearchTerm, setSelectedCategory } = useSearch();
+  const [localSearchTerm, setLocalSearchTerm] = useState("");
+  const [localSelectedCategory, setLocalSelectedCategory] = useState("");
+
   const [inputError, setInputError] = useState("");
   const ref = useRef();
   const navigate = useNavigate();
 
-  function handleQueryChange(event) {
-    setSearchTerm(event.target.value);
+  function handleSearchTermChange(event) {
+    setLocalSearchTerm(event.target.value);
     setInputError("");
   }
 
   function handleCategoryChange(event) {
-    setSelectedCategory(event.target.value);
+    setLocalSelectedCategory(event.target.value);
     setInputError("");
   }
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    if (!searchTerm && selectedCategory === "all") {
+    if (!localSearchTerm && localSelectedCategory === "all") {
+      setSelectedCategory("");
+      setLocalSelectedCategory("");
       setInputError("چیزی برای جستجو وارد نکردی");
       return;
     }
 
     setInputError("");
 
+    setSearchTerm(localSearchTerm);
+    setSelectedCategory(localSelectedCategory);
     // Construct the URL with query parameters
     const queryParams = new URLSearchParams();
-    if (searchTerm) {
-      queryParams.append("search", searchTerm);
+    if (localSearchTerm) {
+      queryParams.append("searchTerm", localSearchTerm);
     }
-    if (selectedCategory !== "all") {
-      queryParams.append("category", selectedCategory);
+    if (localSelectedCategory !== "all") {
+      queryParams.append("category", localSelectedCategory);
     }
 
     // Navigate to the /products route with the query parameters
@@ -65,8 +71,8 @@ function SearchBox() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          value={searchTerm}
-          onChange={handleQueryChange}
+          value={localSearchTerm}
+          onChange={handleSearchTermChange}
           placeholder="جستجوی نام ..."
           style={{ borderColor: inputError ? "red" : "initial" }}
         />

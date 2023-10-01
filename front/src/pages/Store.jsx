@@ -1,12 +1,13 @@
 /** @format */
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import axios from "axios";
+import { ImSpinner2 } from "react-icons/im";
 
 function Store() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -26,6 +27,8 @@ function Store() {
         setProducts(featuredProducts);
       } catch (err) {
         console.log(err);
+      } finally {
+        setLoading(false);
       }
     }
     fetchData();
@@ -33,10 +36,8 @@ function Store() {
 
   return (
     <>
-      <h1>welcome to store page</h1>
-      <li>
-        <Link to="/admin">Admin panel</Link>
-      </li>
+      <h1>store page</h1>
+      {loading && <ImSpinner2 className="loading-icon-products" />}
       <div className="product-cards-list">
         {products?.map?.((product) => (
           <ProductCard product={product} key={product._id} />

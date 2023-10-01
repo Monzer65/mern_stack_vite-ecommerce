@@ -186,8 +186,6 @@ module.exports = {
             maxAge: 7 * 24 * 60 * 60 * 1000,
           });
 
-          console.log("verifyRoles:", user.roles);
-
           res.status(200).json({
             message: "تایید موفق",
             accessToken: tokens.accessToken,

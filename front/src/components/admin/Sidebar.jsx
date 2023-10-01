@@ -1,4 +1,5 @@
 /** @format */
+import { useState } from "react";
 import "../../assets/styles/admin/sidebar.css";
 import logo from "../../assets/logos/mainLogo.png";
 import { BiSolidDashboard } from "react-icons/bi";
@@ -32,84 +33,96 @@ const Sidebar = () => {
     setUserProfile("");
     navigate("/");
   };
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
-    <div className="sidebar">
-      <div className="top">
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <img src={logo} alt="site logo" width={"60px"} className="logo" />
-        </Link>
+    <div className={`sidebar-container ${sidebarOpen ? "open" : ""}`}>
+      <div className="toggle-button" onClick={toggleSidebar}>
+        {sidebarOpen ? "<" : ">"}
       </div>
-      <hr />
-      <div className="center">
-        <ul>
-          <p className="title">MAIN</p>
-          <li>
-            <BiSolidDashboard className="icon" />
-            <span>Dashboard</span>
-          </li>
-          <p className="title">LISTS</p>
-          <Link to="/users" style={{ textDecoration: "none" }}>
-            <li>
-              <IoPersonOutline className="icon" />
-              <span>Users</span>
-            </li>
+      <div className="sidebar">
+        <div className="top">
+          <Link to="/" style={{ textDecoration: "none" }}>
+            <img src={logo} alt="site logo" width={"60px"} className="logo" />
           </Link>
-          <Link to="/products" style={{ textDecoration: "none" }}>
+        </div>
+        <hr />
+        <div className="center">
+          <ul>
+            <p className="title">MAIN</p>
+            <Link to={"/admin"}>
+              <li>
+                <BiSolidDashboard className="icon" />
+                <span>Dashboard</span>
+              </li>
+            </Link>
+            <p className="title">LISTS</p>
+            <Link to="/admin/users" style={{ textDecoration: "none" }}>
+              <li>
+                <IoPersonOutline className="icon" />
+                <span>Users</span>
+              </li>
+            </Link>
+            <Link to="/products" style={{ textDecoration: "none" }}>
+              <li>
+                <FaStore className="icon" />
+                <span>Products</span>
+              </li>
+            </Link>
             <li>
-              <FaStore className="icon" />
-              <span>Products</span>
+              <BsCreditCard2Back className="icon" />
+              <span>Orders</span>
             </li>
-          </Link>
-          <li>
-            <BsCreditCard2Back className="icon" />
-            <span>Orders</span>
-          </li>
-          <li>
-            <MdLocalShipping className="icon" />
-            <span>Delivery</span>
-          </li>
-          <p className="title">USEFUL</p>
-          <li>
-            <AiFillPieChart className="icon" />
-            <span>Stats</span>
-          </li>
-          <li>
-            <IoNotifications className="icon" />
-            <span>Notifications</span>
-          </li>
-          <p className="title">SERVICE</p>
-          <li>
-            <MdHealthAndSafety className="icon" />
-            <span>System Health</span>
-          </li>
-          <li>
-            <MdOutlinePsychologyAlt className="icon" />
-            <span>Logs</span>
-          </li>
-          <li>
-            <AiFillSetting className="icon" />
-            <span>Settings</span>
-          </li>
-          <p className="title">USER</p>
-          <li>
-            <MdAccountCircle className="icon" />
-            <span>Profile</span>
-          </li>
-          <li onClick={signOut}>
-            <ImExit className="icon" />
-            <span>Logout</span>
-          </li>
-        </ul>
-      </div>
-      <div className="bottom">
-        <div
-          className="colorOption"
-          // onClick={() => dispatch({ type: "LIGHT" })}
-        ></div>
-        <div
-          className="colorOption"
-          // onClick={() => dispatch({ type: "DARK" })}
-        ></div>
+            <li>
+              <MdLocalShipping className="icon" />
+              <span>Delivery</span>
+            </li>
+            <p className="title">USEFUL</p>
+            <li>
+              <AiFillPieChart className="icon" />
+              <span>Stats</span>
+            </li>
+            <li>
+              <IoNotifications className="icon" />
+              <span>Notifications</span>
+            </li>
+            <p className="title">SERVICE</p>
+            <li>
+              <MdHealthAndSafety className="icon" />
+              <span>System Health</span>
+            </li>
+            <li>
+              <MdOutlinePsychologyAlt className="icon" />
+              <span>Logs</span>
+            </li>
+            <li>
+              <AiFillSetting className="icon" />
+              <span>Settings</span>
+            </li>
+            <p className="title">USER</p>
+            <li>
+              <MdAccountCircle className="icon" />
+              <span>Profile</span>
+            </li>
+            <li onClick={signOut}>
+              <ImExit className="icon" />
+              <span>Logout</span>
+            </li>
+          </ul>
+        </div>
+        <div className="bottom">
+          <div
+            className="colorOption"
+            // onClick={() => dispatch({ type: "LIGHT" })}
+          ></div>
+          <div
+            className="colorOption"
+            // onClick={() => dispatch({ type: "DARK" })}
+          ></div>
+        </div>
       </div>
     </div>
   );

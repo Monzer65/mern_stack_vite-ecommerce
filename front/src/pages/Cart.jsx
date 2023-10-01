@@ -1,6 +1,7 @@
 /** @format */
 
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 import { CartContext } from "../contexts/CartContext";
 import { FaRegWindowClose } from "react-icons/fa";
 import "../assets/styles/cart.css";
@@ -22,25 +23,27 @@ export default function Cart() {
         <div className="list">
           {cartItems.map((item) => (
             <div className="list-item" key={item._id}>
-              <div
+              <button
                 onClick={() => {
                   removeWholeItemFromCart(item);
                 }}
                 className="remove-whole-item-btn"
               >
                 <FaRegWindowClose />
-              </div>
-              <div className="list-item-detail">
-                <img
-                  src={item.images[0]}
-                  alt={item.name}
-                  className="list-item-image"
-                />
-                <div>
-                  <h3>{item.name}</h3>
-                  <p>${item.price}</p>
+              </button>
+              <Link to={`/product/${item._id}`}>
+                <div className="list-item-detail">
+                  <img
+                    src={item.images[0]}
+                    alt={item.name}
+                    className="list-item-image"
+                  />
+                  <div>
+                    <h3>{item.name}</h3>
+                    <p>${item.price}</p>
+                  </div>
                 </div>
-              </div>
+              </Link>
               <div className="list-item-buttons">
                 تعداد:
                 <button

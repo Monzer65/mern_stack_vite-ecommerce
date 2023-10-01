@@ -11,12 +11,14 @@ const RequireAuth = ({ allowedRoles }) => {
   const decoded = auth?.accessToken ? jwt_decode(auth.accessToken) : undefined;
   const roles = decoded?.roles || [];
 
+  if (!auth.accessToken) {
+    // Redirect to the login page if the user is not authenticated
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
   return roles.find((role) => allowedRoles?.includes(role)) ? (
     <Outlet />
-  ) : auth?.contact ? (
-    <Navigate to="/unauthorized" state={{ from: location }} replace />
   ) : (
-    <Navigate to="/login" state={{ from: location }} replace />
+    <Navigate to="/unauthorized" state={{ from: location }} replace />
   );
 };
 

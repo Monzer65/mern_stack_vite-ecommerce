@@ -6,8 +6,8 @@ import RequireAuth from "./components/RequireAuth";
 import Home from "./pages/Home";
 import Store from "./pages/Store";
 import SearchResult from "./pages/SearchResult";
-import ProductList from "./components/ProductList";
-import ProductDetail from "./components/ProductDetail";
+import ProductList from "./pages/ProductList";
+import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Success from "./pages/OrderSuccess";
 import Cancel from "./pages/OrderCancel";
@@ -27,6 +27,9 @@ import PasswordUpdateForm from "./pages/updatePassword";
 import AddressUpdateForm from "./pages/UpdateAddress";
 
 import AdminDashboard from "./pages/admin/Home";
+import UsersList from "./pages/admin/UsersList";
+import UserDetail from "./pages/admin/UserDetail";
+import UserEdit from "./pages/admin/UserEdit";
 
 import NotFound from "./pages/NotFound";
 import Layout from "./layout/Layout";
@@ -39,6 +42,11 @@ function App() {
       <Route element={<PersistLogin />}>
         <Route path="/admin" element={<RequireAuth allowedRoles={["admin"]} />}>
           <Route index element={<AdminDashboard />} />
+          <Route path="users">
+            <Route index element={<UsersList />} />
+            <Route path=":id" element={<UserDetail />} />
+            <Route path=":id/edit" element={<UserEdit />} />
+          </Route>
           {/* <Route path="login" element={<Login />} />
             <Route path="users">
               <Route index element={<List />} />

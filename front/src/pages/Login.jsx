@@ -3,11 +3,9 @@
 import { useRef, useState, useEffect } from "react";
 import useAuth from "../hooks/UseAuth";
 import axios from "../api/Axios";
-// import useAxiosPrivate from "../hooks/UseAxiosPrivate";
 import { FaSpinner } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useUserContext } from "../contexts/UserNameContext";
-// import { CartContext } from "../contexts/CartContext";
 
 const Login = () => {
   const { auth, setAuth, persist, setPersist } = useAuth();
@@ -26,13 +24,10 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  // const { cartItems, setCartItems } = useContext(CartContext);
-
-  // const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
-    if (auth) navigate("/");
-  }, [auth]);
+    if (auth.accessToken) navigate("/profile");
+  }, []);
 
   const handleContactChange = (e) => {
     setContact(e.target.value);
@@ -112,62 +107,56 @@ const Login = () => {
   }, [persist]);
 
   return (
-    <>
-      <div className="form-container">
-        <h2 className="form-title">ورود</h2>
-        <form onSubmit={handleSubmit} noValidate>
-          <p className="error">{errorMsg}</p>
-          <div className="form-group">
-            <label htmlFor="contact">تلفن یا ایمیل</label>
-            <input
-              type="text"
-              ref={nameRef}
-              id="contact"
-              name="contact"
-              autoComplete="off"
-              value={contact}
-              onChange={handleContactChange}
-              required
-              disabled={loading}
-            />
-            {contactError && <p className="error">{contactError}</p>}
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">پسورد</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-              disabled={loading}
-            />
-            {passwordError && <p className="error">{passwordError}</p>}{" "}
-          </div>
-          <button
-            type="submit"
+    <div className="form-container">
+      <h2 className="form-title">ورود</h2>
+      <form onSubmit={handleSubmit} noValidate>
+        <p className="error">{errorMsg}</p>
+        <div className="form-group">
+          <label htmlFor="contact">تلفن یا ایمیل</label>
+          <input
+            type="text"
+            ref={nameRef}
+            id="contact"
+            name="contact"
+            autoComplete="off"
+            value={contact}
+            onChange={handleContactChange}
+            required
             disabled={loading}
-            className="auth-submit-button"
-          >
-            {loading ? <FaSpinner className="loading-icon" /> : "ورود"}
-          </button>
-          <div className="form-group persist-form-group">
-            <label htmlFor="persist">ذخیره وضعیت ورود</label>
-            <input
-              type="checkbox"
-              id="persist"
-              onChange={togglePersist}
-              checked={persist}
-            />
-          </div>
-        </form>
-        <p>
-          ثبت نام نکرده اید؟
-          <Link to="/register"> حساب کاربری بسازید </Link>
-        </p>
-      </div>
-    </>
+          />
+          {contactError && <p className="error">{contactError}</p>}
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">پسورد</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            onChange={handlePasswordChange}
+            required
+            disabled={loading}
+          />
+          {passwordError && <p className="error">{passwordError}</p>}
+        </div>
+        <button type="submit" disabled={loading} className="auth-submit-button">
+          {loading ? <FaSpinner className="loading-icon" /> : "ورود"}
+        </button>
+        <div className="form-group persist-form-group">
+          <label htmlFor="persist">ذخیره وضعیت ورود</label>
+          <input
+            type="checkbox"
+            id="persist"
+            onChange={togglePersist}
+            checked={persist}
+          />
+        </div>
+      </form>
+      <p>
+        ثبت نام نکرده اید؟
+        <Link to="/register"> حساب کاربری بسازید </Link>
+      </p>
+    </div>
   );
 };
 export default Login;

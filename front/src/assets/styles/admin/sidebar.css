@@ -1,41 +1,87 @@
 /** @format */
-
-.sidebar {
+.sidebar-container {
   flex: 1;
   border-right: 0.5px solid rgb(230, 227, 227);
   min-height: 100vh;
+}
+
+.sidebar-container .toggle-button {
+  position: absolute;
+  display: none;
+  padding: 10px;
+  text-align: center;
+  background-color: #7451f8;
+  color: white;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.toggle-button:hover {
+  opacity: 0.8;
+}
+
+.sidebar-container .sidebar {
+  flex: 1;
   background-color: white;
 }
 
-.top {
+@media (max-width: 768px) {
+  .sidebar-container {
+    /* border-right: unset; */
+  }
+  .sidebar-container .toggle-button {
+    display: block;
+  }
+  .sidebar {
+    display: none;
+    background-color: #fff;
+    width: 50%;
+    height: 100%;
+    overflow: scroll;
+  }
+  .sidebar-container.open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-right: 0.5px solid rgb(230, 227, 227);
+    z-index: 10;
+  }
+  .sidebar-container.open .sidebar {
+    display: block;
+  }
+}
+
+.sidebar .top {
   height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.logo {
+.sidebar .logo {
   font-size: 20px;
   font-weight: bold;
   color: #6439ff;
 }
 
-hr {
+.sidebar hr {
   height: 0;
   border: 0.5px solid rgb(230, 227, 227);
 }
 
-.center {
+.sidebar .center {
   padding-left: 10px;
 }
 
-ul {
+.sidebar ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.title {
+.sidebar .title {
   font-size: 10px;
   font-weight: bold;
   color: #999;
@@ -43,36 +89,36 @@ ul {
   margin-bottom: 5px;
 }
 
-li {
+.sidebar li {
   display: flex;
   align-items: center;
   padding: 5px;
   cursor: pointer;
 }
 
-li:hover {
+.sidebar li:hover {
   background-color: #ece8ff;
 }
 
-.icon {
+.sidebar .icon {
   font-size: 18px;
   color: #7451f8;
 }
 
-span {
+.sidebar span {
   font-size: 13px;
   font-weight: 600;
   color: #888;
   margin-left: 10px;
 }
 
-.bottom {
+.sidebar .bottom {
   display: flex;
   align-items: center;
   margin: 10px;
 }
 
-.colorOption {
+.sidebar .colorOption {
   width: 20px;
   height: 20px;
   border-radius: 5px;
@@ -81,12 +127,12 @@ span {
   margin: 5px;
 }
 
-.colorOption:nth-child(1) {
+.sidebar .colorOption:nth-child(1) {
   background-color: whitesmoke;
 }
-.colorOption:nth-child(2) {
+.sidebar .colorOption:nth-child(2) {
   background-color: #333;
 }
-.colorOption:nth-child(3) {
+.sidebar .colorOption:nth-child(3) {
   background-color: darkblue;
 }

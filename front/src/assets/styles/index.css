@@ -318,71 +318,27 @@ form label {
   cursor: not-allowed;
 }
 
-.results {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
-  margin-top: 2rem;
-  padding: 2rem;
-}
-
-.result {
-  border: 1px solid #ccc;
-  padding: 1rem;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.result h2 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.result h4 {
-  font-size: 1rem;
-  color: #777;
-  margin-bottom: 0.5rem;
-}
-
-.result p {
-  font-size: 1rem;
-  color: #444;
-  margin-bottom: 0.5rem;
-}
-
-.result img {
-  max-width: 100%;
-  height: auto;
-}
-
 .loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
+
 .loading-icon {
   animation: spin 1s linear infinite;
 }
+
 .loading-icon-products {
   animation: spin 1s linear infinite;
   font-size: 4rem;
 }
+
 .product-cards-list {
   display: flex;
   flex: wrap;
   gap: 1rem;
   padding: 1rem;
-}
-
-.Product-detal-container {
-  padding: 2rem;
-}
-
-.Product-detal-container img {
-  display: block;
-  max-width: 350px;
 }
 
 @keyframes spin {
@@ -393,6 +349,7 @@ form label {
     transform: rotate(360deg);
   }
 }
+
 @media (max-width: 985px) {
   .navigation {
     position: absolute;

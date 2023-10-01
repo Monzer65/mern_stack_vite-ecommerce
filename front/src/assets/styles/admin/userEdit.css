@@ -1,0 +1,95 @@
+/** @format */
+
+.admin-user-edit-container {
+  display: flex;
+}
+
+.admin-user-edit-container .edit-container {
+  flex: 6;
+}
+
+.admin-user-edit-container .edit-container form {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.admin-user-edit-container .edit-container form .user-edit-form-group {
+  display: flex;
+  align-items: center;
+  margin: auto;
+  margin-bottom: 10px;
+  max-width: 200px;
+}
+
+.admin-user-edit-container .edit-container form .checkbox-form-group {
+  margin: auto;
+}
+
+.admin-user-edit-container .edit-container form .user-edit-form-group label {
+  all: unset;
+  width: 100px;
+  font-weight: bold;
+  font-size: var(--fs-300);
+  margin-left: 5px;
+}
+
+.admin-user-edit-container .edit-container form .checkbox-form-group label {
+  all: unset;
+  font-weight: bold;
+  font-size: var(--fs-300);
+  margin-left: 5px;
+}
+
+.admin-user-edit-container .edit-container form input[type="text"],
+.admin-user-edit-container .edit-container form input[type="email"],
+.admin-user-edit-container .edit-container form input[type="tel"],
+.admin-user-edit-container .edit-container form input[type="checkbox"] {
+  border-radius: 4px;
+  margin-top: 5px;
+  font-size: 16px;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+.admin-user-edit-container .edit-container form input[type="checkbox"] {
+  cursor: pointer;
+  margin-right: 5px;
+  width: 10px;
+  height: 10px;
+}
+
+.admin-user-edit-container .edit-container form input[type="checkbox"]:checked {
+  background-color: #007bff;
+}
+
+.admin-user-edit-container .edit-container form button {
+  all: unset;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.admin-user-edit-container .edit-container form button:last-child {
+  background-color: #dc3545;
+}
+
+.admin-user-edit-container .edit-container form button:hover {
+  background-color: #005a9e;
+}
+
+.admin-user-edit-container .edit-container form button:last-child:hover {
+  background-color: #722029;
+}
+
+.admin-user-edit-container .edit-container form .user-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+}

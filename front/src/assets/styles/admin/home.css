@@ -7,6 +7,11 @@
 .homeContainer {
   flex: 6;
 }
+@media (max-width: 768px) {
+  .homeContainer {
+    flex: auto;
+  }
+}
 
 .widgets,
 .charts {

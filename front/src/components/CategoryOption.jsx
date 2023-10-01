@@ -1,7 +1,5 @@
 /** @format */
 
-// Updated CategoryOption.js
-
 import { useState } from "react";
 import PropTypes from "prop-types";
 import "../assets/styles/CategoryOption.css";

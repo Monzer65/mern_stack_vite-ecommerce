@@ -51,7 +51,8 @@
   .searchbox .category-dropdown {
     display: none;
   }
-  .searchbox input {
-    border-radius: 5px 0 0 5px;
+
+  .searchbox .submit-btn {
+    border-radius: 0;
   }
 }

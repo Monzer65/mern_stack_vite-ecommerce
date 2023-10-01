@@ -23,7 +23,8 @@ const productsSchema = new mongoose.Schema(
         required: true,
       },
     },
-    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" }, // Array of category objects
+    // Array of category objects
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
     featured: {
       type: Boolean,
       default: false,

@@ -2,14 +2,27 @@
 
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { ImSpinner2 } from "react-icons/im";
+import { CartContext } from "../contexts/CartContext";
+import "../assets/styles/productDetail.css";
 
 function ProductDetail() {
   const { productId } = useParams();
   const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const { addToCart } = useContext(CartContext);
+  const [showNotification, setShowNotification] = useState(false);
+
+  const handleAddToCart = () => {
+    addToCart(product);
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 2500);
+  };
 
   useEffect(() => {
     const apiUrl = `http://localhost:3000/api/products/${productId}`;
@@ -43,11 +56,11 @@ function ProductDetail() {
   };
 
   return (
-    <div className="Product-detal-container">
+    <div className="Product-detail-container">
       {loading ? (
         <ImSpinner2 className="loading-icon-products" />
       ) : (
-        <div>
+        <div className="product-detail">
           <div className="slide-container">
             {product.images && product.images.length > 0 ? (
               <div className="slide">
@@ -66,10 +79,19 @@ function ProductDetail() {
               {"\u276F"}
             </button>
           </div>
-          <h2>{product.name}</h2>
-          <p>Price: ${product.price}</p>
-          <p>{product.description}</p>
-          <button>Add to cart</button>
+          <div className="product-detail-info">
+            <h2>{product.name}</h2>
+            <p>Price: ${product.price}</p>
+            <p>{product.description}</p>
+            {showNotification && (
+              <p className="notification">
+                <span className="tick">✓</span> به سبد اضافه شد
+              </p>
+            )}
+            <button onClick={handleAddToCart} className="add-to-cart-btn">
+              افزودن به سبد
+            </button>
+          </div>
         </div>
       )}
     </div>

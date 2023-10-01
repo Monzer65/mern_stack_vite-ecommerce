@@ -1,11 +1,12 @@
 /** @format */
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useUserContext } from "../contexts/UserNameContext";
+import { ImSpinner2 } from "react-icons/im";
 import useAxiosPrivate from "../hooks/UseAxiosPrivate";
 import useLogout from "../hooks/UseLogout";
-import { Link } from "react-router-dom";
-import { useUserContext } from "../contexts/UserNameContext";
+
 import "../assets/styles/userProfile.css";
 
 const UserProfile = () => {
@@ -20,6 +21,7 @@ const UserProfile = () => {
   const { setUserProfile } = useUserContext();
 
   useEffect(() => {
+    setLoading(true);
     let isMounted = true;
     const controller = new AbortController();
     const fetchUserProfile = async () => {
@@ -32,7 +34,7 @@ const UserProfile = () => {
         setUserProfile(response.data.profile.name);
       } catch (err) {
         console.error("profile error:", err);
-        setError(error.response.data.error);
+        setError(error.response.data);
         navigate("/login", { state: { from: location }, replace: true });
       } finally {
         setLoading(false);
@@ -56,7 +58,7 @@ const UserProfile = () => {
   return (
     <div className="profile-wrapper">
       <h1>اطلاعات حساب کاربری</h1>
-      {loading && <p>Loading...</p>}
+      {loading && <ImSpinner2 className="loading-icon-products" />}
       {error && <p>{error}</p>}
       <div className="profile-contianer">
         <div className="profile-field">

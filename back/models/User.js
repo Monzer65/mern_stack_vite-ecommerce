@@ -7,102 +7,105 @@ const {
   isValidPhoneNumber,
 } = require("../utiles/phoneEmailValidator");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: { type: String, unique: true, sparse: true },
-  phone: { type: String, unique: true, sparse: true },
-  newEmail: {
-    type: String,
-    unique: true,
-    sparse: true,
-    validate: {
-      validator: function (value) {
-        return isValidEmail(value);
-      },
-      message: (props) => `${props.value} is not a valid email`,
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
-    verified: Boolean,
-  },
-  newPhone: {
-    type: String,
-    unique: true,
-    sparse: true,
-    validate: {
-      validator: function (value) {
-        return isValidPhoneNumber(value);
+    email: { type: String, unique: true, sparse: true },
+    phone: { type: String, unique: true, sparse: true },
+    newEmail: {
+      type: String,
+      unique: true,
+      sparse: true,
+      validate: {
+        validator: function (value) {
+          return isValidEmail(value);
+        },
+        message: (props) => `${props.value} is not a valid email`,
       },
-      message: (props) => `${props.value} is not a valid phone`,
+      verified: Boolean,
     },
-    verified: Boolean,
+    newPhone: {
+      type: String,
+      unique: true,
+      sparse: true,
+      validate: {
+        validator: function (value) {
+          return isValidPhoneNumber(value);
+        },
+        message: (props) => `${props.value} is not a valid phone`,
+      },
+      verified: Boolean,
+    },
+    lastEmailUpdate: {
+      type: Date,
+      default: null,
+    },
+    lastPhoneUpdate: {
+      type: Date,
+      default: null,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    verificationCode: String,
+    verificationCodeExpiration: Date,
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    codesSent: {
+      count: { type: Number, default: 0 },
+      lastSent: Date,
+    },
+    cooldownUntil: Date,
+    roles: {
+      type: [String],
+      enum: ["admin", "user", "guest"],
+      default: ["user"],
+    },
+    postalCode: {
+      type: String,
+      default: "",
+    },
+    postalPhone: {
+      type: String,
+      default: "",
+    },
+    apartment: {
+      type: String,
+      default: "",
+    },
+    street: {
+      type: String,
+      default: "",
+    },
+    city: {
+      type: String,
+      default: "",
+    },
+    province: {
+      type: String,
+      default: "",
+    },
+    refreshToken: {
+      type: String,
+      default: "",
+    },
+    refreshTokenVersion: {
+      type: Number,
+      default: 0,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  lastEmailUpdate: {
-    type: Date,
-    default: null,
-  },
-  lastPhoneUpdate: {
-    type: Date,
-    default: null,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  verificationCode: String,
-  verificationCodeExpiration: Date,
-  isVerified: {
-    type: Boolean,
-    default: false,
-  },
-  codesSent: {
-    count: { type: Number, default: 0 },
-    lastSent: Date,
-  },
-  cooldownUntil: Date,
-  roles: {
-    type: [String],
-    enum: ["admin", "user", "guest"],
-    default: ["user"],
-  },
-  postalCode: {
-    type: String,
-    default: "",
-  },
-  postalPhone: {
-    type: String,
-    default: "",
-  },
-  apartment: {
-    type: String,
-    default: "",
-  },
-  street: {
-    type: String,
-    default: "",
-  },
-  city: {
-    type: String,
-    default: "",
-  },
-  province: {
-    type: String,
-    default: "",
-  },
-  refreshToken: {
-    type: String,
-    default: "",
-  },
-  refreshTokenVersion: {
-    type: Number,
-    default: 0,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true }
+);
 
 // Function to set the password hash before saving the user
 userSchema.pre("save", async function (next) {
