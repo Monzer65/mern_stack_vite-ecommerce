@@ -82,7 +82,7 @@ const UserEdit = () => {
       <Sidebar />
       <div className="edit-container">
         <Navbar />
-        <form>
+        <form noValidate>
           <div className="user-edit-form-group">
             <input
               name="name"
@@ -199,7 +199,7 @@ const UserEdit = () => {
         </form>
         {showModal && (
           <Modal
-            message="Are you sure you want to delete this user?"
+            message="مطمئنی؟"
             onConfirm={handleDelete}
             onCancel={() => setShowModal(false)}
           />

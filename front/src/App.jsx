@@ -30,6 +30,7 @@ import AdminDashboard from "./pages/admin/Home";
 import UsersList from "./pages/admin/UsersList";
 import UserDetail from "./pages/admin/UserDetail";
 import UserEdit from "./pages/admin/UserEdit";
+import UserCreate from "./pages/admin/UserCreate";
 
 import NotFound from "./pages/NotFound";
 import Layout from "./layout/Layout";
@@ -46,6 +47,7 @@ function App() {
             <Route index element={<UsersList />} />
             <Route path=":id" element={<UserDetail />} />
             <Route path=":id/edit" element={<UserEdit />} />
+            <Route path="new" element={<UserCreate />} />
           </Route>
           {/* <Route path="login" element={<Login />} />
             <Route path="users">

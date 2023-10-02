@@ -1,0 +1,46 @@
+/** @format */
+.create-user-container {
+  display: flex;
+}
+
+.create-user {
+  flex: 6;
+}
+
+.create-user form {
+  display: grid;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.create-user .form-group {
+  margin-bottom: 15px;
+}
+
+.create-user label {
+  display: block;
+  font-weight: bold;
+}
+
+.create-user input,
+.create-user select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+}
+
+.create-user button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+}
+
+.create-user p {
+  margin-top: 15px;
+}

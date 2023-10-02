@@ -26,9 +26,6 @@
 }
 
 @media (max-width: 768px) {
-  .sidebar-container {
-    /* border-right: unset; */
-  }
   .sidebar-container .toggle-button {
     display: block;
   }
@@ -97,6 +94,18 @@
 }
 
 .sidebar li:hover {
+  background-color: #ece8ff;
+}
+
+.sidebar .dropdown {
+  margin-left: 10px;
+}
+
+.sidebar .dropLink {
+  margin-left: 20px;
+}
+
+.sidebar .dropLink:hover {
   background-color: #ece8ff;
 }
 

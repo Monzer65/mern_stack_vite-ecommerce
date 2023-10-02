@@ -7,6 +7,11 @@ const Category = require("../models/Category");
 const Review = require("../models/Review");
 const Order = require("../models/Order");
 
+const {
+  isValidEmail,
+  isValidPhoneNumber,
+} = require("../utiles/phoneEmailValidator");
+
 module.exports = {
   // async getDashboard(req, res) {
   //   try {
@@ -115,24 +120,62 @@ module.exports = {
         return res.status(404).send("User not found");
       }
 
-      const oldAccessToken = req.headers.authorization.split(" ")[1];
-
-      if (oldAccessToken) {
-        await RevokedToken.create({ token: oldAccessToken, user: user._id });
-      }
-
-      const cookies = req.cookies;
-      const refreshToken = cookies.refreshToken;
-
-      res.clearCookie("refreshToken", refreshToken, {
-        domain: "localhost",
-      });
-
       // Send a 200 status and a message if deleted successfully
       return res.status(200).json("User deleted successfully");
     } catch (error) {
       // Handle any errors and send a 500 status and a message if something goes wrong
       console.error("Error during user deletion:", error);
+      res.status(500).send("Server error");
+    }
+  },
+
+  async createUser(req, res) {
+    try {
+      const { name, email, phone, password, roles } = req.body;
+      const isEmail = isValidEmail(email);
+      const isPhone = isValidPhoneNumber(phone);
+
+      if (!name || !password) {
+        return res.status(400).send("Name and password are required");
+      }
+
+      if (email && !isEmail) {
+        return res.status(400).send("Invalid email format");
+      }
+
+      if (phone && !isPhone) {
+        return res.status(400).send("Invalid phone format");
+      }
+
+      if (!email && !phone) {
+        return res.status(400).send("Email or phone is required");
+      }
+
+      const existingUser = await User.findOne({
+        $or: [
+          { email: isEmail ? email.toLowerCase() : null || "" },
+          { phone: isPhone ? phone : null || "" },
+        ],
+      });
+
+      if (existingUser) {
+        return res.status(409).send("User already exists");
+      }
+
+      const newUser = new User({
+        name,
+        email: isEmail ? email.toLowerCase() : "",
+        phone: isPhone ? phone : "",
+        password,
+        roles,
+        isVerified: true,
+      });
+
+      await newUser.save();
+
+      res.status(201).json(newUser);
+    } catch (error) {
+      console.error("Error during user creation:", error);
       res.status(500).send("Server error");
     }
   },

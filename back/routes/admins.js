@@ -19,13 +19,6 @@ const checkAdminRole = (req, res, next) => {
   next();
 };
 
-// router.get(
-//   "/dashboard",
-//   authMiddleware.verifyAndRevokeAccessToken,
-//   checkAdminRole,
-//   adminController.getDashboard
-// );
-
 router.get(
   "/users",
   authMiddleware.verifyAndRevokeAccessToken,
@@ -53,6 +46,20 @@ router.delete(
   checkAdminRole,
   adminController.deleteUser
 );
+
+router.post(
+  "/users/new",
+  authMiddleware.verifyAndRevokeAccessToken,
+  checkAdminRole,
+  adminController.createUser
+);
+
+// router.get(
+//   "/dashboard",
+//   authMiddleware.verifyAndRevokeAccessToken,
+//   checkAdminRole,
+//   adminController.getDashboard
+// );
 
 // router.get(
 //   "/recent-orders",
@@ -139,13 +146,6 @@ router.delete(
 //   authMiddleware.verifyAndRevokeAccessToken,
 //   checkAdminRole,
 //   productController.deleteProduct
-// );
-
-// router.get("/customers", checkAdminRole, profileController.getCustomersByAdmin);
-// router.get(
-//   "/customers/:customerId",
-//   checkAdminRole,
-//   profileController.getCustomerByIdByAdmin
 // );
 
 module.exports = router;

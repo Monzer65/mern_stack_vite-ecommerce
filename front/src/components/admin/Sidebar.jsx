@@ -2,6 +2,7 @@
 import { useState } from "react";
 import "../../assets/styles/admin/sidebar.css";
 import logo from "../../assets/logos/mainLogo.png";
+import { FaAngleDown, FaAngleRight } from "react-icons/fa";
 import { BiSolidDashboard } from "react-icons/bi";
 import {
   IoPersonOutline,
@@ -38,6 +39,11 @@ const Sidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <div className={`sidebar-container ${sidebarOpen ? "open" : ""}`}>
       <div className="toggle-button" onClick={toggleSidebar}>
@@ -66,6 +72,18 @@ const Sidebar = () => {
                 <span>Users</span>
               </li>
             </Link>
+            <div className="dropdown">
+              <button onClick={toggleMenu} className="dropbtn">
+                {isOpen ? <FaAngleDown /> : <FaAngleRight />}
+              </button>
+            </div>
+            {isOpen && (
+              <li>
+                <Link to={"/admin/users/new"} className="dropLink">
+                  create
+                </Link>
+              </li>
+            )}
             <Link to="/products" style={{ textDecoration: "none" }}>
               <li>
                 <FaStore className="icon" />
